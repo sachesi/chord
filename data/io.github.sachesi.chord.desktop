@@ -1,0 +1,12 @@
+[Desktop Entry]
+Name=Chord
+GenericName=Text Editor
+Comment=Edit text files
+Exec=chord %U
+Icon=io.github.sachesi.chord
+Terminal=false
+Type=Application
+Categories=GTK;Utility;TextEditor;
+MimeType=text/plain;
+StartupNotify=true
+Keywords=text;editor;plain;code;config;

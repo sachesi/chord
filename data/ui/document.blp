@@ -1,0 +1,30 @@
+using Gtk 4.0;
+using Adw 1;
+using GtkSource 5;
+
+template $ChordDocument: Adw.Bin {
+  child: Adw.ToolbarView {
+    [top]
+    Adw.Banner banner {
+      use-markup: false;
+    }
+
+    content: ScrolledWindow {
+      child: GtkSource.View view {
+        monospace: true;
+        show-line-numbers: true;
+        highlight-current-line: true;
+        wrap-mode: word_char;
+        tab-width: 4;
+        insert-spaces-instead-of-tabs: true;
+        auto-indent: true;
+        smart-backspace: true;
+        indent-on-tab: true;
+        top-margin: 6;
+        bottom-margin: 6;
+        left-margin: 6;
+        right-margin: 6;
+      };
+    };
+  };
+}

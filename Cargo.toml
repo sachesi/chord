@@ -1,0 +1,24 @@
+[package]
+name = "chord"
+version = "0.1.0"
+edition = "2024"
+rust-version = "1.92"
+license = "GPL-3.0-or-later"
+description = "A GTK4 text editor"
+repository = "https://github.com/sachesi/chord"
+readme = "README.md"
+
+[dependencies]
+adw = { package = "libadwaita", version = "0.9.2", features = ["v1_9"] }
+gettext-rs = { version = "0.8", features = ["gettext-system"] }
+gio = "0.22.10"
+glib = "0.22.10"
+gtk = { package = "gtk4", version = "0.11.5", features = ["v4_22"] }
+sourceview5 = "0.11.2"
+
+[build-dependencies]
+glib-build-tools = "0.22"
+
+[profile.release]
+lto = "thin"
+codegen-units = 1

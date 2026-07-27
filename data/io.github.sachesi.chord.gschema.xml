@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schemalist gettext-domain="chord">
+  <schema id="io.github.sachesi.chord" path="/io/github/sachesi/chord/">
+    <key name="window-width" type="i">
+      <default>900</default>
+      <summary>Width of the last window closed</summary>
+    </key>
+    <key name="window-height" type="i">
+      <default>640</default>
+      <summary>Height of the last window closed</summary>
+    </key>
+    <key name="window-maximized" type="b">
+      <default>false</default>
+      <summary>Whether the last window closed was maximized</summary>
+    </key>
+  </schema>
+</schemalist>
