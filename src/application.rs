@@ -137,7 +137,8 @@ impl ChordApplication {
     fn setup_actions(&self) {
         let quit = gio::ActionEntry::builder("quit")
             .activate(|app: &Self, _, _| {
-                // Closed rather than dropped, so that each remembers its size.
+                // Each window asks about its own unsaved documents; the application ends
+                // with the last of them.
                 for window in app.windows() {
                     window.close();
                 }

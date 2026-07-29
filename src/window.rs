@@ -1,10 +1,10 @@
 //! A window of documents, one to a tab.
 
-use std::cell::RefCell;
+use std::cell::{Cell, RefCell};
 
 use adw::prelude::*;
 use adw::subclass::prelude::*;
-use gettextrs::gettext;
+use gettextrs::{gettext, ngettext};
 
 use crate::{
     application::{self, ChordApplication},
@@ -31,6 +31,8 @@ mod imp {
         pub tab_view: TemplateChild<adw::TabView>,
         /// What ties the header to the document shown, undone when another is shown.
         pub shown: RefCell<Vec<glib::Binding>>,
+        /// Set once the documents not saved have been settled, so the window may close.
+        pub closing: Cell<bool>,
     }
 
     #[glib::object_subclass]
@@ -71,8 +73,7 @@ mod imp {
 
     impl WindowImpl for ChordWindow {
         fn close_request(&self) -> glib::Propagation {
-            self.obj().remember_size();
-            self.parent_close_request()
+            self.obj().close_request()
         }
     }
 
@@ -98,6 +99,13 @@ impl ChordWindow {
             .tab_view
             .selected_page()
             .and_then(|page| page.child().downcast().ok())
+    }
+
+    fn documents(&self) -> Vec<Document> {
+        let tab_view = &self.imp().tab_view;
+        (0..tab_view.n_pages())
+            .filter_map(|index| tab_view.nth_page(index).child().downcast().ok())
+            .collect()
     }
 
     fn page_of(&self, file: &gio::File) -> Option<adw::TabPage> {
@@ -157,6 +165,13 @@ impl ChordWindow {
                 window.imp().stack.set_visible_child_name(page);
             }
         ));
+        tab_view.connect_close_page(glib::clone!(
+            #[weak(rename_to = window)]
+            self,
+            #[upgrade_or]
+            glib::Propagation::Proceed,
+            move |tab_view, page| window.close_page(tab_view, page)
+        ));
         tab_view.connect_create_window(glib::clone!(
             #[weak(rename_to = window)]
             self,
@@ -213,6 +228,11 @@ impl ChordWindow {
         tab_view.set_selected_page(&page);
         document.grab_focus();
         document
+    }
+
+    fn select(&self, document: &Document) {
+        let tab_view = &self.imp().tab_view;
+        tab_view.set_selected_page(&tab_view.page(document));
     }
 
     /// Opens each of `files` in a tab of its own; one open already is shown instead. An
@@ -375,6 +395,104 @@ impl ChordWindow {
         dialog.set_default_response(Some("cancel"));
         dialog.set_close_response("cancel");
         dialog.choose_future(Some(self)).await == "accept"
+    }
+
+    fn close_page(&self, tab_view: &adw::TabView, page: &adw::TabPage) -> glib::Propagation {
+        let Ok(document) = page.child().downcast::<Document>() else {
+            return glib::Propagation::Proceed;
+        };
+        if !document.is_modified() || self.imp().closing.get() {
+            return glib::Propagation::Proceed;
+        }
+        tab_view.set_selected_page(page);
+        glib::spawn_future_local(glib::clone!(
+            #[weak(rename_to = window)]
+            self,
+            #[weak]
+            tab_view,
+            #[weak]
+            page,
+            async move {
+                let close = window.settle(&[document]).await;
+                tab_view.close_page_finish(&page, close);
+            }
+        ));
+        glib::Propagation::Stop
+    }
+
+    fn close_request(&self) -> glib::Propagation {
+        let unsaved: Vec<Document> = self
+            .documents()
+            .into_iter()
+            .filter(Document::is_modified)
+            .collect();
+        if self.imp().closing.get() || unsaved.is_empty() {
+            self.remember_size();
+            return glib::Propagation::Proceed;
+        }
+        glib::spawn_future_local(glib::clone!(
+            #[weak(rename_to = window)]
+            self,
+            async move {
+                if window.settle(&unsaved).await {
+                    window.imp().closing.set(true);
+                    window.close();
+                }
+            }
+        ));
+        glib::Propagation::Stop
+    }
+
+    /// Asks what becomes of the changes to `unsaved` before they close: true once they
+    /// are saved or given up.
+    async fn settle(&self, unsaved: &[Document]) -> bool {
+        let body = match unsaved {
+            [document] => {
+                self.select(document);
+                fill(
+                    &gettext(
+                        "“%s” has changes that are not saved. Closing without saving loses them.",
+                    ),
+                    &[&document.name()],
+                )
+            }
+            _ => fill(
+                &ngettext(
+                    "%s document has changes that are not saved. Closing without saving loses them.",
+                    "%s documents have changes that are not saved. Closing without saving loses them.",
+                    u32::try_from(unsaved.len()).unwrap_or(u32::MAX),
+                ),
+                &[&unsaved.len().to_string()],
+            ),
+        };
+        let (discard, save) = if unsaved.len() == 1 {
+            (gettext("_Discard"), gettext("_Save"))
+        } else {
+            (gettext("_Discard All"), gettext("_Save All"))
+        };
+        let dialog = adw::AlertDialog::new(Some(&gettext("Save Changes?")), Some(&body));
+        dialog.add_responses(&[
+            ("cancel", &gettext("_Cancel")),
+            ("discard", &discard),
+            ("save", &save),
+        ]);
+        dialog.set_response_appearance("discard", adw::ResponseAppearance::Destructive);
+        dialog.set_response_appearance("save", adw::ResponseAppearance::Suggested);
+        dialog.set_default_response(Some("save"));
+        dialog.set_close_response("cancel");
+        match dialog.choose_future(Some(self)).await.as_str() {
+            "save" => {
+                for document in unsaved {
+                    self.select(document);
+                    if !self.save(document, false).await {
+                        return false;
+                    }
+                }
+                true
+            }
+            "discard" => true,
+            _ => false,
+        }
     }
 
     fn remember_size(&self) {
