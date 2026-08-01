@@ -436,7 +436,10 @@ impl Document {
     fn replace_one(&self) {
         let search = self.search();
         let buffer = self.buffer();
+        // The bindings assert on a replacement GtkSourceView declines without an error,
+        // which it does for anything but a match it has counted.
         if let Some((mut start, mut end)) = buffer.selection_bounds()
+            && search.occurrence_position(&start, &end) > 0
             && search
                 .replace(&mut start, &mut end, &self.imp().replace_entry.text())
                 .is_ok()
@@ -447,7 +450,18 @@ impl Document {
     }
 
     fn replace_all(&self) {
-        let _ = self.search().replace_all(&self.imp().replace_entry.text());
+        let search = self.search();
+        // The bindings assert that nothing replaced is an error. The count stays unknown
+        // until the whole text has been searched, which takes a while in a large file, so
+        // until then one match found from the start stands for it.
+        let found = match search.occurrences_count() {
+            0 => false,
+            count if count > 0 => true,
+            _ => search.forward(&self.buffer().start_iter()).is_some(),
+        };
+        if found {
+            let _ = search.replace_all(&self.imp().replace_entry.text());
+        }
     }
 
     fn update_occurrences(&self) {
