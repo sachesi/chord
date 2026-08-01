@@ -13,7 +13,15 @@ use crate::{
 };
 
 /// The actions that act on the document shown, off while there is none.
-const DOCUMENT_ACTIONS: [&str; 3] = ["win.save", "win.save-as", "win.close-document"];
+const DOCUMENT_ACTIONS: [&str; 7] = [
+    "win.save",
+    "win.save-as",
+    "win.close-document",
+    "win.find",
+    "win.replace",
+    "win.find-next",
+    "win.find-previous",
+];
 
 mod imp {
     use super::*;
@@ -53,6 +61,26 @@ mod imp {
                 let tab_view = &window.imp().tab_view;
                 if let Some(page) = tab_view.selected_page() {
                     tab_view.close_page(&page);
+                }
+            });
+            klass.install_action("win.find", None, |window, _, _| {
+                if let Some(document) = window.document() {
+                    document.show_search(false);
+                }
+            });
+            klass.install_action("win.replace", None, |window, _, _| {
+                if let Some(document) = window.document() {
+                    document.show_search(true);
+                }
+            });
+            klass.install_action("win.find-next", None, |window, _, _| {
+                if let Some(document) = window.document() {
+                    document.find_next();
+                }
+            });
+            klass.install_action("win.find-previous", None, |window, _, _| {
+                if let Some(document) = window.document() {
+                    document.find_previous();
                 }
             });
         }

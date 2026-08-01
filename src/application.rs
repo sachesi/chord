@@ -149,7 +149,7 @@ impl ChordApplication {
             .build();
         self.add_action_entries([quit, about]);
 
-        let accels: [(&str, &[&str]); 7] = [
+        let accels: [(&str, &[&str]); 11] = [
             ("app.quit", &["<Control>q"]),
             ("win.new-document", &["<Control>n", "<Control>t"]),
             ("win.open", &["<Control>o"]),
@@ -157,6 +157,10 @@ impl ChordApplication {
             ("win.save-as", &["<Control><Shift>s"]),
             ("win.close-document", &["<Control>w"]),
             ("window.close", &["<Control><Shift>w"]),
+            ("win.find", &["<Control>f"]),
+            ("win.replace", &["<Control>h"]),
+            ("win.find-next", &["<Control>g"]),
+            ("win.find-previous", &["<Control><Shift>g"]),
         ];
         for (action, keys) in accels {
             self.set_accels_for_action(action, keys);

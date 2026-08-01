@@ -1,14 +1,16 @@
-//! One document: its text and the file it came from or goes to.
+//! One document: its text, the file it came from or goes to, and its search.
 
 use std::{
-    cell::{Cell, RefCell},
+    cell::{Cell, OnceCell, RefCell},
     path::Path,
 };
 
 use adw::prelude::*;
 use adw::subclass::prelude::*;
-use gettextrs::gettext;
+use gettextrs::{gettext, ngettext};
 use sourceview5::prelude::*;
+
+use crate::fill;
 
 mod imp {
     use super::*;
@@ -19,6 +21,22 @@ mod imp {
     pub struct Document {
         #[template_child]
         pub banner: TemplateChild<adw::Banner>,
+        #[template_child]
+        pub search_bar: TemplateChild<gtk::SearchBar>,
+        #[template_child]
+        pub search_entry: TemplateChild<gtk::SearchEntry>,
+        #[template_child]
+        pub occurrences: TemplateChild<gtk::Label>,
+        #[template_child]
+        pub replace_toggle: TemplateChild<gtk::ToggleButton>,
+        #[template_child]
+        pub case_sensitive: TemplateChild<gtk::CheckButton>,
+        #[template_child]
+        pub whole_words: TemplateChild<gtk::CheckButton>,
+        #[template_child]
+        pub regex: TemplateChild<gtk::CheckButton>,
+        #[template_child]
+        pub replace_entry: TemplateChild<gtk::Entry>,
         #[template_child]
         pub view: TemplateChild<sourceview5::View>,
         /// The name, marked while there are changes not saved.
@@ -34,6 +52,7 @@ mod imp {
         #[property(get)]
         pub busy: Cell<bool>,
         pub file: sourceview5::File,
+        pub search: OnceCell<sourceview5::SearchContext>,
     }
 
     #[glib::object_subclass]
@@ -45,6 +64,7 @@ mod imp {
         fn class_init(klass: &mut Self::Class) {
             sourceview5::View::ensure_type();
             klass.bind_template();
+            klass.bind_template_callbacks();
         }
 
         fn instance_init(obj: &glib::subclass::InitializingObject<Self>) {
@@ -71,6 +91,34 @@ mod imp {
     }
 
     impl BinImpl for Document {}
+
+    #[gtk::template_callbacks]
+    impl Document {
+        #[template_callback]
+        fn find_next(&self) {
+            self.obj().find_next();
+        }
+
+        #[template_callback]
+        fn find_previous(&self) {
+            self.obj().find_previous();
+        }
+
+        #[template_callback]
+        fn close_search(&self) {
+            self.search_bar.set_search_mode(false);
+        }
+
+        #[template_callback]
+        fn replace_one(&self) {
+            self.obj().replace_one();
+        }
+
+        #[template_callback]
+        fn replace_all(&self) {
+            self.obj().replace_all();
+        }
+    }
 }
 
 glib::wrapper! {
@@ -135,6 +183,7 @@ impl Document {
             self,
             move |_| document.update_title()
         ));
+        self.setup_search();
         self.update_location();
     }
 
@@ -253,6 +302,185 @@ impl Document {
         let banner = &self.imp().banner;
         banner.set_title(title);
         banner.set_revealed(true);
+    }
+
+    fn setup_search(&self) {
+        let imp = self.imp();
+        let settings = sourceview5::SearchSettings::new();
+        settings.set_wrap_around(true);
+        imp.search_entry
+            .bind_property("text", &settings, "search-text")
+            .sync_create()
+            .build();
+        imp.case_sensitive
+            .bind_property("active", &settings, "case-sensitive")
+            .sync_create()
+            .build();
+        imp.whole_words
+            .bind_property("active", &settings, "at-word-boundaries")
+            .sync_create()
+            .build();
+        imp.regex
+            .bind_property("active", &settings, "regex-enabled")
+            .sync_create()
+            .build();
+
+        let buffer = self.buffer();
+        let search = sourceview5::SearchContext::new(&buffer, Some(&settings));
+        imp.search_bar
+            .bind_property("search-mode-enabled", &search, "highlight")
+            .sync_create()
+            .build();
+        search.connect_occurrences_count_notify(glib::clone!(
+            #[weak(rename_to = document)]
+            self,
+            move |_| document.update_occurrences()
+        ));
+        search.connect_regex_error_notify(glib::clone!(
+            #[weak(rename_to = document)]
+            self,
+            move |search| {
+                let entry = &document.imp().search_entry;
+                if search.regex_error().is_some() {
+                    entry.add_css_class("error");
+                } else {
+                    entry.remove_css_class("error");
+                }
+            }
+        ));
+        buffer.connect_mark_set(glib::clone!(
+            #[weak(rename_to = document)]
+            self,
+            move |buffer, _, mark| {
+                if *mark == buffer.get_insert() {
+                    document.update_occurrences();
+                }
+            }
+        ));
+        imp.search_entry.connect_search_changed(glib::clone!(
+            #[weak(rename_to = document)]
+            self,
+            move |_| {
+                let buffer = document.buffer();
+                let from = buffer.selection_bounds().map_or_else(
+                    || buffer.iter_at_mark(&buffer.get_insert()),
+                    |(start, _)| start,
+                );
+                document.select_match(document.search().forward(&from));
+            }
+        ));
+        imp.search_bar
+            .connect_search_mode_enabled_notify(glib::clone!(
+                #[weak(rename_to = document)]
+                self,
+                move |bar| {
+                    if bar.is_search_mode() {
+                        document.update_occurrences();
+                    } else {
+                        document.imp().view.grab_focus();
+                    }
+                }
+            ));
+        imp.search.set(search).ok();
+    }
+
+    fn search(&self) -> &sourceview5::SearchContext {
+        self.imp()
+            .search
+            .get()
+            .expect("the search is set up with the document")
+    }
+
+    /// Opens the search, with what is selected on one line as the text to find.
+    pub fn show_search(&self, replace: bool) {
+        let imp = self.imp();
+        let buffer = self.buffer();
+        if let Some((start, end)) = buffer.selection_bounds()
+            && start.line() == end.line()
+        {
+            imp.search_entry.set_text(&buffer.text(&start, &end, false));
+        }
+        imp.replace_toggle.set_active(replace);
+        imp.search_bar.set_search_mode(true);
+        imp.search_entry.grab_focus();
+        imp.search_entry.select_region(0, -1);
+    }
+
+    pub fn find_next(&self) {
+        let buffer = self.buffer();
+        let from = buffer
+            .selection_bounds()
+            .map_or_else(|| buffer.iter_at_mark(&buffer.get_insert()), |(_, end)| end);
+        self.select_match(self.search().forward(&from));
+    }
+
+    pub fn find_previous(&self) {
+        let buffer = self.buffer();
+        let from = buffer.selection_bounds().map_or_else(
+            || buffer.iter_at_mark(&buffer.get_insert()),
+            |(start, _)| start,
+        );
+        self.select_match(self.search().backward(&from));
+    }
+
+    fn select_match(&self, found: Option<(gtk::TextIter, gtk::TextIter, bool)>) {
+        if let Some((start, end, _)) = found {
+            let buffer = self.buffer();
+            buffer.select_range(&start, &end);
+            self.imp()
+                .view
+                .scroll_to_mark(&buffer.get_insert(), 0.25, false, 0.0, 0.0);
+        }
+    }
+
+    fn replace_one(&self) {
+        let search = self.search();
+        let buffer = self.buffer();
+        if let Some((mut start, mut end)) = buffer.selection_bounds()
+            && search
+                .replace(&mut start, &mut end, &self.imp().replace_entry.text())
+                .is_ok()
+        {
+            buffer.place_cursor(&end);
+        }
+        self.find_next();
+    }
+
+    fn replace_all(&self) {
+        let _ = self.search().replace_all(&self.imp().replace_entry.text());
+    }
+
+    fn update_occurrences(&self) {
+        let imp = self.imp();
+        let Some(search) = imp.search.get() else {
+            return;
+        };
+        if !imp.search_bar.is_search_mode() {
+            return;
+        }
+        let count = search.occurrences_count();
+        let label = if imp.search_entry.text().is_empty() || count < 0 {
+            String::new()
+        } else if count == 0 {
+            gettext("No results")
+        } else {
+            let position = self
+                .buffer()
+                .selection_bounds()
+                .map_or(0, |(start, end)| search.occurrence_position(&start, &end));
+            if position > 0 {
+                fill(
+                    &gettext("%s of %s"),
+                    &[&position.to_string(), &count.to_string()],
+                )
+            } else {
+                fill(
+                    &ngettext("%s result", "%s results", count.unsigned_abs()),
+                    &[&count.to_string()],
+                )
+            }
+        };
+        imp.occurrences.set_label(&label);
     }
 }
 
