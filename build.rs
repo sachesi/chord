@@ -26,5 +26,6 @@ fn main() {
     );
 
     println!("cargo::rerun-if-changed=data/ui");
+    println!("cargo::rerun-if-changed=data/icons");
     println!("cargo::rerun-if-changed=data/chord.gresource.xml");
 }

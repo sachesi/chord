@@ -61,19 +61,25 @@ install:
     mkdir -p {{datadir}}/applications
     msgfmt --desktop --template=data/{{app_id}}.desktop -d po -o {{datadir}}/applications/{{app_id}}.desktop
     install -Dm644 data/{{app_id}}.gschema.xml {{datadir}}/glib-2.0/schemas/{{app_id}}.gschema.xml
+    install -Dm644 data/icons/hicolor/scalable/apps/{{app_id}}.svg {{datadir}}/icons/hicolor/scalable/apps/{{app_id}}.svg
+    install -Dm644 data/icons/hicolor/symbolic/apps/{{app_id}}-symbolic.svg {{datadir}}/icons/hicolor/symbolic/apps/{{app_id}}-symbolic.svg
     for lang in $(cat po/LINGUAS); do install -d {{datadir}}/locale/$lang/LC_MESSAGES; msgfmt -o {{datadir}}/locale/$lang/LC_MESSAGES/chord.mo po/$lang.po; done
     # A staged install (DESTDIR) leaves the caches to the package manager's triggers.
     [ -n "{{destdir}}" ] || glib-compile-schemas {{datadir}}/glib-2.0/schemas
     [ -n "{{destdir}}" ] || update-desktop-database -q {{datadir}}/applications || true
+    [ -n "{{destdir}}" ] || gtk4-update-icon-cache -qtf {{datadir}}/icons/hicolor || gtk-update-icon-cache -qtf {{datadir}}/icons/hicolor || true
     @echo "installed to {{prefix}}"
 
 uninstall:
     rm -f {{bindir}}/chord
     rm -f {{datadir}}/applications/{{app_id}}.desktop
     rm -f {{datadir}}/glib-2.0/schemas/{{app_id}}.gschema.xml
+    rm -f {{datadir}}/icons/hicolor/scalable/apps/{{app_id}}.svg {{datadir}}/icons/hicolor/symbolic/apps/{{app_id}}-symbolic.svg
     for lang in $(cat po/LINGUAS); do rm -f {{datadir}}/locale/$lang/LC_MESSAGES/chord.mo; done
     glib-compile-schemas {{datadir}}/glib-2.0/schemas || true
     update-desktop-database -q {{datadir}}/applications || true
+    # A cache that still lists the removed icons hides the same icons installed elsewhere.
+    gtk4-update-icon-cache -qtf {{datadir}}/icons/hicolor || gtk-update-icon-cache -qtf {{datadir}}/icons/hicolor || true
 
 # Make Chord the default for plain text for the current user.
 set-default:

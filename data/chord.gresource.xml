@@ -3,5 +3,7 @@
   <gresource prefix="/io/github/sachesi/chord">
     <file preprocess="xml-stripblanks">ui/window.ui</file>
     <file preprocess="xml-stripblanks">ui/document.ui</file>
+    <file preprocess="xml-stripblanks" alias="icons/scalable/apps/io.github.sachesi.chord.svg">icons/hicolor/scalable/apps/io.github.sachesi.chord.svg</file>
+    <file preprocess="xml-stripblanks" alias="icons/symbolic/apps/io.github.sachesi.chord-symbolic.svg">icons/hicolor/symbolic/apps/io.github.sachesi.chord-symbolic.svg</file>
   </gresource>
 </gresources>
