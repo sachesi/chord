@@ -12,6 +12,11 @@ use sourceview5::prelude::*;
 
 use crate::fill;
 
+/// When a file was last changed, as GIO gives it: seconds, and microseconds within them.
+type Stamp = (u64, u32);
+
+const STAMP_ATTRIBUTES: &str = "time::modified,time::modified-usec";
+
 mod imp {
     use super::*;
 
@@ -53,6 +58,8 @@ mod imp {
         pub busy: Cell<bool>,
         pub file: sourceview5::File,
         pub search: OnceCell<sourceview5::SearchContext>,
+        /// When the file last changed on disk, as of its last load or save here.
+        pub on_disk: Cell<Option<Stamp>>,
     }
 
     #[glib::object_subclass]
@@ -94,6 +101,11 @@ mod imp {
 
     #[gtk::template_callbacks]
     impl Document {
+        #[template_callback]
+        fn on_reload(&self) {
+            self.obj().reload();
+        }
+
         #[template_callback]
         fn find_next(&self) {
             self.obj().find_next();
@@ -163,6 +175,13 @@ impl Document {
                 || gettext("Untitled Document"),
                 |name| name.to_string_lossy().into_owned(),
             )
+    }
+
+    /// The line the cursor is on, counted from 1.
+    fn line(&self) -> u32 {
+        let buffer = self.buffer();
+        let line = buffer.iter_at_mark(&buffer.get_insert()).line();
+        u32::try_from(line).unwrap_or(0) + 1
     }
 
     fn setup(&self) {
@@ -241,14 +260,18 @@ impl Document {
             Ok(()) => {}
             Err(error) if error.matches(gio::IOErrorEnum::NotFound) => {}
             Err(error) if error.matches(sourceview5::FileLoaderError::ConversionFallback) => {
-                self.show_notice(&gettext(
-                    "Parts of this file are not text and show as codes; saving writes the codes",
-                ));
+                self.show_notice(
+                    &gettext(
+                        "Parts of this file are not text and show as codes; saving writes the codes",
+                    ),
+                    false,
+                );
             }
             Err(error) => return Err(error),
         }
         buffer.place_cursor(&buffer.start_iter());
         self.guess_language();
+        self.remember_disk_state().await;
         remember_recent(location);
         Ok(())
     }
@@ -276,10 +299,28 @@ impl Document {
             self.guess_language();
         }
         imp.banner.set_revealed(false);
+        self.remember_disk_state().await;
         if let Some(location) = self.location() {
             remember_recent(&location);
         }
         Ok(())
+    }
+
+    fn reload(&self) {
+        let Some(location) = self.location() else {
+            return;
+        };
+        let line = self.line();
+        glib::spawn_future_local(glib::clone!(
+            #[weak(rename_to = document)]
+            self,
+            async move {
+                match document.load(&location).await {
+                    Ok(()) => document.go_to(line),
+                    Err(error) => document.show_notice(error.message(), false),
+                }
+            }
+        ));
     }
 
     fn guess_language(&self) {
@@ -298,10 +339,70 @@ impl Document {
         buffer.set_language(language.as_ref());
     }
 
-    fn show_notice(&self, title: &str) {
+    async fn remember_disk_state(&self) {
+        let stamp = match self.location() {
+            Some(location) => stamp(&location).await.ok().flatten(),
+            None => None,
+        };
+        self.imp().on_disk.set(stamp);
+    }
+
+    /// Says so in the banner when the file changed or went away since it was loaded or
+    /// saved here.
+    pub fn check_on_disk(&self) {
+        let (Some(location), Some(known)) = (self.location(), self.imp().on_disk.get()) else {
+            return;
+        };
+        if self.busy() {
+            return;
+        }
+        glib::spawn_future_local(glib::clone!(
+            #[weak(rename_to = document)]
+            self,
+            async move {
+                let Ok(now) = stamp(&location).await else {
+                    return;
+                };
+                // A load or a save meanwhile has a newer answer.
+                if document.busy() || document.imp().on_disk.get() != Some(known) {
+                    return;
+                }
+                match now {
+                    Some(now) if now == known => {}
+                    Some(_) if document.is_modified() => document.show_notice(
+                        &gettext("The file changed on disk; reloading discards your changes"),
+                        true,
+                    ),
+                    Some(_) => document.show_notice(&gettext("The file changed on disk"), true),
+                    None => document.show_notice(
+                        &gettext("The file is no longer on disk; saving writes it again"),
+                        false,
+                    ),
+                }
+            }
+        ));
+    }
+
+    fn show_notice(&self, title: &str, offer_reload: bool) {
         let banner = &self.imp().banner;
         banner.set_title(title);
+        banner.set_button_label(offer_reload.then(|| gettext("_Reload")).as_deref());
         banner.set_revealed(true);
+    }
+
+    /// Puts the cursor at the start of `line`, counted from 1 and kept within the text.
+    fn go_to(&self, line: u32) {
+        let buffer = self.buffer();
+        let line = i32::try_from(line.saturating_sub(1))
+            .unwrap_or(i32::MAX)
+            .min(buffer.line_count() - 1);
+        let Some(iter) = buffer.iter_at_line(line) else {
+            return;
+        };
+        buffer.place_cursor(&iter);
+        let view = &self.imp().view;
+        view.scroll_to_mark(&buffer.get_insert(), 0.0, true, 0.0, 0.5);
+        view.grab_focus();
     }
 
     fn setup_search(&self) {
@@ -495,6 +596,24 @@ impl Document {
             }
         };
         imp.occurrences.set_label(&label);
+    }
+}
+
+async fn stamp(location: &gio::File) -> Result<Option<Stamp>, glib::Error> {
+    match location
+        .query_info_future(
+            STAMP_ATTRIBUTES,
+            gio::FileQueryInfoFlags::NONE,
+            glib::Priority::DEFAULT,
+        )
+        .await
+    {
+        Ok(info) => Ok(Some((
+            info.attribute_uint64("time::modified"),
+            info.attribute_uint32("time::modified-usec"),
+        ))),
+        Err(error) if error.matches(gio::IOErrorEnum::NotFound) => Ok(None),
+        Err(error) => Err(error),
     }
 }
 

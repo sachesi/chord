@@ -213,6 +213,14 @@ impl ChordWindow {
             }
         ));
 
+        self.connect_is_active_notify(|window| {
+            if window.is_active()
+                && let Some(document) = window.document()
+            {
+                document.check_on_disk();
+            }
+        });
+
         self.show_document();
     }
 
@@ -247,6 +255,7 @@ impl ChordWindow {
                 .sync_create()
                 .build(),
         ]);
+        document.check_on_disk();
     }
 
     pub fn new_document(&self) -> Document {
@@ -388,8 +397,17 @@ impl ChordWindow {
                 return true;
             };
             let (flag, heading, body, accept) = if error
-                .matches(sourceview5::FileSaverError::InvalidChars)
+                .matches(sourceview5::FileSaverError::ExternallyModified)
             {
+                (
+                    sourceview5::FileSaverFlags::IGNORE_MODIFICATION_TIME,
+                    gettext("Replace the File on Disk?"),
+                    gettext(
+                        "“%s” was changed by another program after it was opened here. Saving replaces those changes.",
+                    ),
+                    gettext("_Replace"),
+                )
+            } else if error.matches(sourceview5::FileSaverError::InvalidChars) {
                 (
                     sourceview5::FileSaverFlags::IGNORE_INVALID_CHARS,
                     gettext("Save the Codes?"),
