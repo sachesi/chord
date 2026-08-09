@@ -289,15 +289,14 @@ impl ChordWindow {
     }
 
     fn load(&self, document: &Document, file: &gio::File) {
+        let loaded = document.load(file);
         glib::spawn_future_local(glib::clone!(
             #[weak(rename_to = window)]
             self,
             #[strong]
             document,
-            #[strong]
-            file,
             async move {
-                let Err(error) = document.load(&file).await else {
+                let Err(error) = loaded.await else {
                     return;
                 };
                 window.toast(&fill(

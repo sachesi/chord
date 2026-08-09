@@ -244,36 +244,46 @@ impl Document {
     }
 
     /// Reads `location` into the document. A file that does not exist yet leaves the
-    /// document empty, to be made when it is saved.
-    pub async fn load(&self, location: &gio::File) -> Result<(), glib::Error> {
+    /// document empty, to be made when it is saved. The document takes the location and
+    /// turns busy at once, before the future is first polled, so nothing else is opened
+    /// into it meanwhile.
+    pub fn load(
+        &self,
+        location: &gio::File,
+    ) -> impl Future<Output = Result<(), glib::Error>> + use<> {
         let imp = self.imp();
         imp.file.set_location(Some(location));
         self.update_location();
         imp.banner.set_revealed(false);
         self.set_busy(true);
         let loader = sourceview5::FileLoader::new(&self.buffer(), &imp.file);
-        let result = loader.load_future(glib::Priority::DEFAULT).0.await;
-        self.set_busy(false);
-        let buffer = self.buffer();
-        buffer.set_modified(false);
-        match result {
-            Ok(()) => {}
-            Err(error) if error.matches(gio::IOErrorEnum::NotFound) => {}
-            Err(error) if error.matches(sourceview5::FileLoaderError::ConversionFallback) => {
-                self.show_notice(
-                    &gettext(
-                        "Parts of this file are not text and show as codes; saving writes the codes",
-                    ),
-                    false,
-                );
+        let (loaded, _) = loader.load_future(glib::Priority::DEFAULT);
+        let document = self.clone();
+        let location = location.clone();
+        async move {
+            let result = loaded.await;
+            document.set_busy(false);
+            let buffer = document.buffer();
+            buffer.set_modified(false);
+            match result {
+                Ok(()) => {}
+                Err(error) if error.matches(gio::IOErrorEnum::NotFound) => {}
+                Err(error) if error.matches(sourceview5::FileLoaderError::ConversionFallback) => {
+                    document.show_notice(
+                        &gettext(
+                            "Parts of this file are not text and show as codes; saving writes the codes",
+                        ),
+                        false,
+                    );
+                }
+                Err(error) => return Err(error),
             }
-            Err(error) => return Err(error),
+            buffer.place_cursor(&buffer.start_iter());
+            document.guess_language();
+            document.remember_disk_state().await;
+            remember_recent(&location);
+            Ok(())
         }
-        buffer.place_cursor(&buffer.start_iter());
-        self.guess_language();
-        self.remember_disk_state().await;
-        remember_recent(location);
-        Ok(())
     }
 
     /// Writes the document to its file, or to `target` when given, which then becomes its
@@ -311,11 +321,12 @@ impl Document {
             return;
         };
         let line = self.line();
+        let loaded = self.load(&location);
         glib::spawn_future_local(glib::clone!(
             #[weak(rename_to = document)]
             self,
             async move {
-                match document.load(&location).await {
+                match loaded.await {
                     Ok(()) => document.go_to(line),
                     Err(error) => document.show_notice(error.message(), false),
                 }
