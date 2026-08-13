@@ -1,6 +1,7 @@
 mod application;
 mod config;
 mod document;
+mod font;
 mod window;
 
 use gio::prelude::*;

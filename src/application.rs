@@ -1,22 +1,32 @@
-use std::{ops::ControlFlow, os::unix::ffi::OsStrExt};
+use std::{
+    cell::{Cell, OnceCell},
+    ops::ControlFlow,
+    os::unix::ffi::OsStrExt,
+};
 
 use adw::prelude::*;
 use adw::subclass::prelude::*;
 use gettextrs::gettext;
+use gtk::pango;
 
-use crate::{config, window::ChordWindow};
+use crate::{config, font, window::ChordWindow};
 
 mod imp {
     use super::*;
 
     pub struct ChordApplication {
         pub settings: gio::Settings,
+        /// The font of the text, see [`font::css`]; made at startup, once GTK is.
+        pub font: OnceCell<gtk::CssProvider>,
+        pub zoom: Cell<f64>,
     }
 
     impl Default for ChordApplication {
         fn default() -> Self {
             Self {
                 settings: gio::Settings::new(config::APP_ID),
+                font: OnceCell::new(),
+                zoom: Cell::new(1.0),
             }
         }
     }
@@ -34,7 +44,9 @@ mod imp {
         fn startup(&self) {
             self.parent_startup();
             sourceview5::init();
-            self.obj().setup_actions();
+            let app = self.obj();
+            app.setup_font();
+            app.setup_actions();
         }
 
         /// D-Bus activation without files: the window last used, or a new one.
@@ -147,10 +159,25 @@ impl ChordApplication {
         let about = gio::ActionEntry::builder("about")
             .activate(|app: &Self, _, _| app.show_about())
             .build();
-        self.add_action_entries([quit, about]);
+        let zoom_in = gio::ActionEntry::builder("zoom-in")
+            .activate(|app: &Self, _, _| app.zoom_by(0.1))
+            .build();
+        let zoom_out = gio::ActionEntry::builder("zoom-out")
+            .activate(|app: &Self, _, _| app.zoom_by(-0.1))
+            .build();
+        let zoom_reset = gio::ActionEntry::builder("zoom-reset")
+            .activate(|app: &Self, _, _| app.set_zoom(1.0))
+            .build();
+        self.add_action_entries([quit, about, zoom_in, zoom_out, zoom_reset]);
 
-        let accels: [(&str, &[&str]); 11] = [
+        let accels: [(&str, &[&str]); 14] = [
             ("app.quit", &["<Control>q"]),
+            (
+                "app.zoom-in",
+                &["<Control>plus", "<Control>equal", "<Control>KP_Add"],
+            ),
+            ("app.zoom-out", &["<Control>minus", "<Control>KP_Subtract"]),
+            ("app.zoom-reset", &["<Control>0", "<Control>KP_0"]),
             ("win.new-document", &["<Control>n", "<Control>t"]),
             ("win.open", &["<Control>o"]),
             ("win.save", &["<Control>s"]),
@@ -165,6 +192,44 @@ impl ChordApplication {
         for (action, keys) in accels {
             self.set_accels_for_action(action, keys);
         }
+    }
+
+    fn setup_font(&self) {
+        let imp = self.imp();
+        let provider = imp.font.get_or_init(gtk::CssProvider::new);
+        if let Some(display) = gtk::gdk::Display::default() {
+            gtk::style_context_add_provider_for_display(
+                &display,
+                provider,
+                gtk::STYLE_PROVIDER_PRIORITY_APPLICATION,
+            );
+        }
+        adw::StyleManager::default().connect_monospace_font_name_notify(glib::clone!(
+            #[weak(rename_to = app)]
+            self,
+            move |_| app.update_font()
+        ));
+        self.update_font();
+    }
+
+    fn update_font(&self) {
+        let imp = self.imp();
+        let name = adw::StyleManager::default().monospace_font_name();
+        let font = pango::FontDescription::from_string(&name);
+        if let Some(provider) = imp.font.get() {
+            provider.load_from_string(&font::css(&font, imp.zoom.get()));
+        }
+    }
+
+    fn zoom_by(&self, step: f64) {
+        self.set_zoom(self.imp().zoom.get() + step);
+    }
+
+    fn set_zoom(&self, zoom: f64) {
+        // Tenths, so that steps up and down come back to where they started.
+        let zoom = (zoom.clamp(font::MIN_ZOOM, font::MAX_ZOOM) * 10.0).round() / 10.0;
+        self.imp().zoom.set(zoom);
+        self.update_font();
     }
 
     fn show_about(&self) {
