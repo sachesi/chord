@@ -1,0 +1,86 @@
+using Gtk 4.0;
+using Adw 1;
+
+Adw.PreferencesDialog preferences {
+  Adw.PreferencesPage {
+    Adw.PreferencesGroup {
+      title: _("Font");
+
+      Adw.SwitchRow use_system_font {
+        title: _("Use System Font");
+      }
+
+      Adw.ActionRow {
+        title: _("Font");
+        sensitive: bind use_system_font.active inverted;
+        activatable-widget: font_button;
+
+        [suffix]
+        FontDialogButton font_button {
+          valign: center;
+          level: font;
+
+          dialog: FontDialog {
+            title: _("Choose a Font");
+          };
+        }
+      }
+    }
+
+    Adw.PreferencesGroup {
+      title: _("Display");
+
+      Adw.SwitchRow show_line_numbers {
+        title: _("Show Line Numbers");
+      }
+
+      Adw.SwitchRow highlight_current_line {
+        title: _("Highlight Current Line");
+      }
+
+      Adw.SwitchRow wrap_text {
+        title: _("Wrap Text");
+      }
+
+      Adw.SwitchRow show_right_margin {
+        title: _("Show Right Margin");
+      }
+
+      Adw.SpinRow right_margin_position {
+        title: _("Right Margin Column");
+        sensitive: bind show_right_margin.active;
+
+        adjustment: Adjustment {
+          lower: 1;
+          upper: 1000;
+          step-increment: 1;
+          page-increment: 10;
+        };
+      }
+    }
+
+    Adw.PreferencesGroup {
+      title: _("Indentation");
+
+      Adw.SpinRow tab_width {
+        title: _("Tab Width");
+
+        adjustment: Adjustment {
+          lower: 1;
+          upper: 32;
+          step-increment: 1;
+          page-increment: 4;
+        };
+      }
+
+      Adw.SwitchRow insert_spaces {
+        title: _("Insert Spaces Instead of Tabs");
+      }
+
+      Adw.SwitchRow auto_indent {
+        title: _("Automatic Indentation");
+        subtitle: _("Start a new line where the one before it started");
+      }
+    }
+  }
+}

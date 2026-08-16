@@ -10,7 +10,7 @@ use adw::subclass::prelude::*;
 use gettextrs::{gettext, ngettext};
 use sourceview5::prelude::*;
 
-use crate::fill;
+use crate::{application, fill};
 
 /// When a file was last changed, as GIO gives it: seconds, and microseconds within them.
 type Stamp = (u64, u32);
@@ -202,8 +202,42 @@ impl Document {
             self,
             move |_| document.update_title()
         ));
+        self.setup_settings();
         self.setup_search();
         self.update_location();
+    }
+
+    fn setup_settings(&self) {
+        let imp = self.imp();
+        let settings = application::settings();
+        let view = &*imp.view;
+        // Keys named after the properties of the view they set.
+        for key in [
+            "show-line-numbers",
+            "highlight-current-line",
+            "show-right-margin",
+            "right-margin-position",
+            "tab-width",
+            "auto-indent",
+        ] {
+            settings.bind(key, view, key).get().build();
+        }
+        settings
+            .bind("wrap-text", view, "wrap-mode")
+            .get()
+            .mapping(|value, _| {
+                let mode = if value.get::<bool>()? {
+                    gtk::WrapMode::WordChar
+                } else {
+                    gtk::WrapMode::None
+                };
+                Some(mode.to_value())
+            })
+            .build();
+        settings
+            .bind("insert-spaces", view, "insert-spaces-instead-of-tabs")
+            .get()
+            .build();
     }
 
     fn update_title(&self) {

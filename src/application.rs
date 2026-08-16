@@ -156,6 +156,12 @@ impl ChordApplication {
                 }
             })
             .build();
+        let preferences = gio::ActionEntry::builder("preferences")
+            .activate(|app: &Self, _, _| {
+                crate::preferences::dialog(&app.imp().settings)
+                    .present(app.active_window().as_ref());
+            })
+            .build();
         let about = gio::ActionEntry::builder("about")
             .activate(|app: &Self, _, _| app.show_about())
             .build();
@@ -168,10 +174,14 @@ impl ChordApplication {
         let zoom_reset = gio::ActionEntry::builder("zoom-reset")
             .activate(|app: &Self, _, _| app.set_zoom(1.0))
             .build();
-        self.add_action_entries([quit, about, zoom_in, zoom_out, zoom_reset]);
+        self.add_action_entries([quit, preferences, about, zoom_in, zoom_out, zoom_reset]);
+        let settings = &self.imp().settings;
+        self.add_action(&settings.create_action("wrap-text"));
+        self.add_action(&settings.create_action("show-line-numbers"));
 
-        let accels: [(&str, &[&str]); 14] = [
+        let accels: [(&str, &[&str]); 15] = [
             ("app.quit", &["<Control>q"]),
+            ("app.preferences", &["<Control>comma"]),
             (
                 "app.zoom-in",
                 &["<Control>plus", "<Control>equal", "<Control>KP_Add"],
@@ -204,6 +214,18 @@ impl ChordApplication {
                 gtk::STYLE_PROVIDER_PRIORITY_APPLICATION,
             );
         }
+        imp.settings.connect_changed(
+            None,
+            glib::clone!(
+                #[weak(rename_to = app)]
+                self,
+                move |_, key| {
+                    if key == "use-system-font" || key == "font" {
+                        app.update_font();
+                    }
+                }
+            ),
+        );
         adw::StyleManager::default().connect_monospace_font_name_notify(glib::clone!(
             #[weak(rename_to = app)]
             self,
@@ -214,7 +236,11 @@ impl ChordApplication {
 
     fn update_font(&self) {
         let imp = self.imp();
-        let name = adw::StyleManager::default().monospace_font_name();
+        let name = if imp.settings.boolean("use-system-font") {
+            adw::StyleManager::default().monospace_font_name()
+        } else {
+            imp.settings.string("font")
+        };
         let font = pango::FontDescription::from_string(&name);
         if let Some(provider) = imp.font.get() {
             provider.load_from_string(&font::css(&font, imp.zoom.get()));
