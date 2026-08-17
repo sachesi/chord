@@ -40,6 +40,12 @@ pub fn dialog(settings: &gio::Settings) -> adw::PreferencesDialog {
             Some(font.to_str().to_variant())
         })
         .build();
+    // Bound here rather than in the interface, where the row comes out sensitive whatever
+    // the switch says until it is flipped.
+    object("show_right_margin")
+        .bind_property("active", &object("right_margin_position"), "sensitive")
+        .sync_create()
+        .build();
     object("preferences")
         .downcast()
         .expect("the preferences are a preferences dialog")
