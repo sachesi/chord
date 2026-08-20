@@ -58,6 +58,8 @@ mod imp {
         pub busy: Cell<bool>,
         pub file: sourceview5::File,
         pub search: OnceCell<sourceview5::SearchContext>,
+        /// Follows insert-spaces on the shared settings, which outlive the document.
+        pub indentation_changed: RefCell<Option<glib::SignalHandlerId>>,
         /// When the file last changed on disk, as of its last load or save here.
         pub on_disk: Cell<Option<Stamp>>,
     }
@@ -87,6 +89,9 @@ mod imp {
         }
 
         fn dispose(&self) {
+            if let Some(handler) = self.indentation_changed.take() {
+                application::settings().disconnect(handler);
+            }
             self.dispose_template();
         }
     }
@@ -234,10 +239,26 @@ impl Document {
                 Some(mode.to_value())
             })
             .build();
-        settings
-            .bind("insert-spaces", view, "insert-spaces-instead-of-tabs")
-            .get()
-            .build();
+        let handler = settings.connect_changed(
+            Some("insert-spaces"),
+            glib::clone!(
+                #[weak(rename_to = document)]
+                self,
+                move |_, _| document.update_indentation()
+            ),
+        );
+        imp.indentation_changed.replace(Some(handler));
+        self.update_indentation();
+    }
+
+    fn update_indentation(&self) {
+        let makefile = self
+            .buffer()
+            .language()
+            .is_some_and(|language| language.id() == "makefile");
+        self.imp().view.set_insert_spaces_instead_of_tabs(
+            application::settings().boolean("insert-spaces") && !makefile,
+        );
     }
 
     fn update_title(&self) {
@@ -382,6 +403,7 @@ impl Document {
         let language = sourceview5::LanguageManager::default()
             .guess_language(name.as_deref(), Some(&content_type));
         buffer.set_language(language.as_ref());
+        self.update_indentation();
     }
 
     async fn remember_disk_state(&self) {

@@ -38,6 +38,7 @@
     <key name="insert-spaces" type="b">
       <default>true</default>
       <summary>Insert spaces instead of tabs</summary>
+      <description>Makefiles get tabs whatever this says, since make needs them.</description>
     </key>
     <key name="auto-indent" type="b">
       <default>true</default>
