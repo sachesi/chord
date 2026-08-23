@@ -136,7 +136,7 @@ impl ChordWindow {
             .collect()
     }
 
-    fn page_of(&self, file: &gio::File) -> Option<adw::TabPage> {
+    pub fn page_of(&self, file: &gio::File) -> Option<adw::TabPage> {
         let tab_view = &self.imp().tab_view;
         (0..tab_view.n_pages())
             .map(|index| tab_view.nth_page(index))
@@ -272,12 +272,14 @@ impl ChordWindow {
         tab_view.set_selected_page(&tab_view.page(document));
     }
 
-    /// Opens each of `files` in a tab of its own; one open already is shown instead. An
-    /// empty document on screen takes the first.
+    /// Opens each of `files` in a tab of its own; one open already, in this window or
+    /// another, is shown instead. An empty document on screen takes the first.
     pub fn open_files(&self, files: &[gio::File]) {
+        let app = self.application().and_downcast::<ChordApplication>();
         for file in files {
-            if let Some(page) = self.page_of(file) {
-                self.imp().tab_view.set_selected_page(&page);
+            if let Some((window, page)) = app.as_ref().and_then(|app| app.find_document(file)) {
+                window.imp().tab_view.set_selected_page(&page);
+                window.present();
                 continue;
             }
             let document = self

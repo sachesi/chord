@@ -97,6 +97,13 @@ template $ChordWindow: Adw.ApplicationWindow {
 menu primary_menu {
   section {
     item {
+      label: _("New _Window");
+      action: "app.new-window";
+    }
+  }
+
+  section {
+    item {
       label: _("_Save As…");
       action: "win.save-as";
     }

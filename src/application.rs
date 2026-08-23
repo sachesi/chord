@@ -76,7 +76,12 @@ mod imp {
                     command_line.create_file_for_arg(std::ffi::OsStr::from_bytes(arg))
                 })
                 .collect();
-            app.present_window().open_files(&files);
+            let window = if options.contains("new-window") {
+                app.new_window()
+            } else {
+                app.present_window()
+            };
+            window.open_files(&files);
             glib::ExitCode::SUCCESS
         }
     }
@@ -109,6 +114,14 @@ impl ChordApplication {
             .property("resource-base-path", config::RESOURCE_PATH)
             .build();
         app.add_main_option(
+            "new-window",
+            glib::Char::from(b'w'),
+            glib::OptionFlags::NONE,
+            glib::OptionArg::None,
+            &gettext("Open the files in a new window"),
+            None,
+        );
+        app.add_main_option(
             "version",
             glib::Char::from(0),
             glib::OptionFlags::NONE,
@@ -128,7 +141,7 @@ impl ChordApplication {
     }
 
     /// A window with an empty document to start typing in.
-    fn new_window(&self) -> ChordWindow {
+    pub fn new_window(&self) -> ChordWindow {
         let window = ChordWindow::new(self);
         window.new_document();
         window.present();
@@ -146,6 +159,15 @@ impl ChordApplication {
         }
     }
 
+    /// The window and the tab that show `file`, in any window.
+    pub fn find_document(&self, file: &gio::File) -> Option<(ChordWindow, adw::TabPage)> {
+        self.windows().into_iter().find_map(|window| {
+            let window = window.downcast::<ChordWindow>().ok()?;
+            let page = window.page_of(file)?;
+            Some((window, page))
+        })
+    }
+
     fn setup_actions(&self) {
         let quit = gio::ActionEntry::builder("quit")
             .activate(|app: &Self, _, _| {
@@ -154,6 +176,11 @@ impl ChordApplication {
                 for window in app.windows() {
                     window.close();
                 }
+            })
+            .build();
+        let new_window = gio::ActionEntry::builder("new-window")
+            .activate(|app: &Self, _, _| {
+                app.new_window();
             })
             .build();
         let preferences = gio::ActionEntry::builder("preferences")
@@ -174,13 +201,22 @@ impl ChordApplication {
         let zoom_reset = gio::ActionEntry::builder("zoom-reset")
             .activate(|app: &Self, _, _| app.set_zoom(1.0))
             .build();
-        self.add_action_entries([quit, preferences, about, zoom_in, zoom_out, zoom_reset]);
+        self.add_action_entries([
+            quit,
+            new_window,
+            preferences,
+            about,
+            zoom_in,
+            zoom_out,
+            zoom_reset,
+        ]);
         let settings = &self.imp().settings;
         self.add_action(&settings.create_action("wrap-text"));
         self.add_action(&settings.create_action("show-line-numbers"));
 
-        let accels: [(&str, &[&str]); 15] = [
+        let accels: [(&str, &[&str]); 16] = [
             ("app.quit", &["<Control>q"]),
+            ("app.new-window", &["<Control><Shift>n"]),
             ("app.preferences", &["<Control>comma"]),
             (
                 "app.zoom-in",
