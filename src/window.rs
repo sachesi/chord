@@ -221,6 +221,27 @@ impl ChordWindow {
             }
         });
 
+        // Files dropped anywhere open, over the text too, which would take their names.
+        let drop = gtk::DropTarget::new(
+            gtk::gdk::FileList::static_type(),
+            gtk::gdk::DragAction::COPY,
+        );
+        drop.set_propagation_phase(gtk::PropagationPhase::Capture);
+        drop.connect_drop(glib::clone!(
+            #[weak(rename_to = window)]
+            self,
+            #[upgrade_or]
+            false,
+            move |_, value, _, _| {
+                let Ok(files) = value.get::<gtk::gdk::FileList>() else {
+                    return false;
+                };
+                window.open_files(&files.files());
+                true
+            }
+        ));
+        self.add_controller(drop);
+
         self.show_document();
     }
 
