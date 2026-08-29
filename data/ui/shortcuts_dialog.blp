@@ -1,0 +1,141 @@
+using Gtk 4.0;
+using Adw 1;
+
+Adw.ShortcutsDialog shortcuts_dialog {
+  Adw.ShortcutsSection {
+    title: _("Documents");
+
+    Adw.ShortcutsItem {
+      title: _("New Document");
+      accelerator: "<Control>n <Control>t";
+    }
+
+    Adw.ShortcutsItem {
+      title: _("Open");
+      accelerator: "<Control>o";
+    }
+
+    Adw.ShortcutsItem {
+      title: _("Save");
+      accelerator: "<Control>s";
+    }
+
+    Adw.ShortcutsItem {
+      title: _("Save As");
+      accelerator: "<Control><Shift>s";
+    }
+
+    Adw.ShortcutsItem {
+      title: _("Close Document");
+      accelerator: "<Control>w";
+    }
+
+    Adw.ShortcutsItem {
+      title: _("Next Document");
+      accelerator: "<Control>Page_Down";
+    }
+
+    Adw.ShortcutsItem {
+      title: _("Previous Document");
+      accelerator: "<Control>Page_Up";
+    }
+
+    Adw.ShortcutsItem {
+      title: _("Switch to a Document");
+      subtitle: _("Alt and the number of the tab");
+      accelerator: "<Alt>1";
+    }
+  }
+
+  Adw.ShortcutsSection {
+    title: _("Editing");
+
+    Adw.ShortcutsItem {
+      title: _("Undo");
+      accelerator: "<Control>z";
+    }
+
+    Adw.ShortcutsItem {
+      title: _("Redo");
+      accelerator: "<Control><Shift>z";
+    }
+
+    Adw.ShortcutsItem {
+      title: _("Move Lines Up");
+      accelerator: "<Alt>Up";
+    }
+
+    Adw.ShortcutsItem {
+      title: _("Move Lines Down");
+      accelerator: "<Alt>Down";
+    }
+
+    Adw.ShortcutsItem {
+      title: _("Find");
+      accelerator: "<Control>f";
+    }
+
+    Adw.ShortcutsItem {
+      title: _("Find and Replace");
+      accelerator: "<Control>h";
+    }
+
+    Adw.ShortcutsItem {
+      title: _("Next Match");
+      accelerator: "<Control>g";
+    }
+
+    Adw.ShortcutsItem {
+      title: _("Previous Match");
+      accelerator: "<Control><Shift>g";
+    }
+  }
+
+  Adw.ShortcutsSection {
+    title: _("View");
+
+    Adw.ShortcutsItem {
+      title: _("Zoom In");
+      accelerator: "<Control>plus";
+    }
+
+    Adw.ShortcutsItem {
+      title: _("Zoom Out");
+      accelerator: "<Control>minus";
+    }
+
+    Adw.ShortcutsItem {
+      title: _("Normal Size");
+      accelerator: "<Control>0";
+    }
+  }
+
+  Adw.ShortcutsSection {
+    title: _("General");
+
+    Adw.ShortcutsItem {
+      title: _("New Window");
+      accelerator: "<Control><Shift>n";
+    }
+
+    Adw.ShortcutsItem {
+      title: _("Close Window");
+      accelerator: "<Control><Shift>w";
+    }
+
+    Adw.ShortcutsItem {
+      title: _("Preferences");
+      accelerator: "<Control>comma";
+    }
+
+    Adw.ShortcutsItem {
+      title: _("Keyboard Shortcuts");
+      accelerator: "<Control>question";
+    }
+
+    Adw.ShortcutsItem {
+      title: _("Quit");
+      accelerator: "<Control>q";
+    }
+  }
+}
