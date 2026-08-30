@@ -15,21 +15,19 @@ pub const MAX_ZOOM: f64 = 4.0;
 
 /// The rule that gives views of the class `chord-view` `font` at `zoom`.
 pub fn css(font: &pango::FontDescription, zoom: f64) -> String {
-    let families: Vec<String> = font
+    let mut css = String::from("textview.chord-view { font-family: ");
+    for name in font
         .family()
         .iter()
         .flat_map(|family| family.split(','))
         .map(str::trim)
         .filter(|name| !name.is_empty())
-        .map(|name| {
-            let name = name.replace(|c: char| c == '"' || c == '\\' || c.is_control(), "");
-            format!("\"{name}\"")
-        })
-        .collect();
-    let mut css = format!(
-        "textview.chord-view {{ font-family: {};",
-        families.join(", ")
-    );
+    {
+        let name = name.replace(|c: char| c == '"' || c == '\\' || c.is_control(), "");
+        let _ = write!(css, "\"{name}\", ");
+    }
+    // A font that is not installed falls back to a monospace one, not to the interface's.
+    css.push_str("monospace;");
     let (size, unit) = match font.size() {
         0 => (DEFAULT_POINTS, "pt"),
         size if font.is_size_absolute() => (f64::from(size) / f64::from(pango::SCALE), "px"),
@@ -57,7 +55,7 @@ mod tests {
         let font = pango::FontDescription::from_string("Fira Code Bold 12");
         assert_eq!(
             css(&font, 1.0),
-            "textview.chord-view { font-family: \"Fira Code\"; font-size: 12.00pt; font-weight: 700; }"
+            "textview.chord-view { font-family: \"Fira Code\", monospace; font-size: 12.00pt; font-weight: 700; }"
         );
     }
 
@@ -80,7 +78,7 @@ mod tests {
         font.set_size(10 * pango::SCALE);
         assert_eq!(
             css(&font, 1.0),
-            "textview.chord-view { font-family: \"Evil } textview { color: red\"; font-size: 10.00pt; }"
+            "textview.chord-view { font-family: \"Evil } textview { color: red\", monospace; font-size: 10.00pt; }"
         );
     }
 }
