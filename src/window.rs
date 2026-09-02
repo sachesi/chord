@@ -326,7 +326,9 @@ impl ChordWindow {
                     &gettext("Could not open “%s”: %s"),
                     &[&document.name(), error.message()],
                 ));
-                // From wherever the tab is by now: it can be dragged away while it loads.
+                // Whatever part of the file came in is let go without asking, and from
+                // wherever the tab is by now: it can be dragged away while it loads.
+                document.buffer().set_modified(false);
                 if let Some(tab_view) = document
                     .ancestor(adw::TabView::static_type())
                     .and_downcast::<adw::TabView>()

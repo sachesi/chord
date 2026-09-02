@@ -318,8 +318,6 @@ impl Document {
         async move {
             let result = loaded.await;
             document.set_busy(false);
-            let buffer = document.buffer();
-            buffer.set_modified(false);
             match result {
                 Ok(()) => {}
                 Err(error) if error.matches(gio::IOErrorEnum::NotFound) => {}
@@ -333,6 +331,8 @@ impl Document {
                 }
                 Err(error) => return Err(error),
             }
+            let buffer = document.buffer();
+            buffer.set_modified(false);
             buffer.place_cursor(&buffer.start_iter());
             document.guess_language();
             document.remember_disk_state().await;
