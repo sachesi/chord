@@ -549,6 +549,27 @@ impl Document {
                     }
                 }
             ));
+        // Escape closes the search from the text and the buttons too, not only from its
+        // entry.
+        let escape = gtk::ShortcutController::new();
+        escape.add_shortcut(gtk::Shortcut::new(
+            Some(gtk::KeyvalTrigger::new(
+                gtk::gdk::Key::Escape,
+                gtk::gdk::ModifierType::empty(),
+            )),
+            Some(gtk::CallbackAction::new(|widget, _| {
+                let Some(document) = widget.downcast_ref::<Self>() else {
+                    return glib::Propagation::Proceed;
+                };
+                let bar = &document.imp().search_bar;
+                if !bar.is_search_mode() {
+                    return glib::Propagation::Proceed;
+                }
+                bar.set_search_mode(false);
+                glib::Propagation::Stop
+            })),
+        ));
+        self.add_controller(escape);
         imp.search.set(search).ok();
     }
 
