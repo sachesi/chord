@@ -14,108 +14,124 @@ template $ChordDocument: Adw.Bin {
     SearchBar search_bar {
       show-close-button: true;
 
-      child: Box {
-        orientation: vertical;
-        spacing: 6;
+      child: Adw.BreakpointBin {
+        width-request: 200;
+        height-request: 34;
 
-        Box {
-          spacing: 6;
+        Adw.Breakpoint {
+          condition ("max-width: 400sp")
 
-          SearchEntry search_entry {
-            placeholder-text: _("Find");
-            hexpand: true;
-            activate => $find_next() swapped;
-            next-match => $find_next() swapped;
-            previous-match => $find_previous() swapped;
-            stop-search => $close_search() swapped;
-          }
-
-          Label occurrences {
-            width-chars: 8;
-
-            styles [
-              "dim-label",
-              "numeric",
-            ]
-          }
-
-          Box {
-            styles [
-              "linked",
-            ]
-
-            Button {
-              icon-name: "go-up-symbolic";
-              tooltip-text: _("Previous Match");
-              clicked => $find_previous() swapped;
-            }
-
-            Button {
-              icon-name: "go-down-symbolic";
-              tooltip-text: _("Next Match");
-              clicked => $find_next() swapped;
-            }
-          }
-
-          ToggleButton replace_toggle {
-            icon-name: "edit-find-replace-symbolic";
-            tooltip-text: _("Replace");
-          }
-
-          MenuButton {
-            icon-name: "view-more-symbolic";
-            tooltip-text: _("Search Options");
-
-            popover: Popover {
-              child: Box {
-                orientation: vertical;
-
-                CheckButton case_sensitive {
-                  label: _("_Match Case");
-                  use-underline: true;
-                }
-
-                CheckButton whole_words {
-                  label: _("Match _Whole Words");
-                  use-underline: true;
-                }
-
-                CheckButton regex {
-                  label: _("_Regular Expressions");
-                  use-underline: true;
-                }
-              };
-            };
+          setters {
+            replace_row.orientation: vertical;
+            occurrences.visible: false;
           }
         }
 
-        Box replace_row {
+        child: Box {
+          orientation: vertical;
           spacing: 6;
-          visible: bind replace_toggle.active;
-
-          Entry replace_entry {
-            placeholder-text: _("Replace");
-            hexpand: true;
-            activate => $replace_one() swapped;
-          }
 
           Box {
             spacing: 6;
-            halign: end;
 
-            Button {
-              label: _("_Replace");
-              use-underline: true;
-              clicked => $replace_one() swapped;
+            SearchEntry search_entry {
+              placeholder-text: _("Find");
+              hexpand: true;
+              width-chars: 8;
+              activate => $find_next() swapped;
+              next-match => $find_next() swapped;
+              previous-match => $find_previous() swapped;
+              stop-search => $close_search() swapped;
             }
 
-            Button {
-              label: _("Replace _All");
-              use-underline: true;
-              clicked => $replace_all() swapped;
+            Label occurrences {
+              width-chars: 8;
+
+              styles [
+                "dim-label",
+                "numeric",
+              ]
+            }
+
+            Box {
+              styles [
+                "linked",
+              ]
+
+              Button {
+                icon-name: "go-up-symbolic";
+                tooltip-text: _("Previous Match");
+                clicked => $find_previous() swapped;
+              }
+
+              Button {
+                icon-name: "go-down-symbolic";
+                tooltip-text: _("Next Match");
+                clicked => $find_next() swapped;
+              }
+            }
+
+            ToggleButton replace_toggle {
+              icon-name: "edit-find-replace-symbolic";
+              tooltip-text: _("Replace");
+            }
+
+            MenuButton {
+              icon-name: "view-more-symbolic";
+              tooltip-text: _("Search Options");
+
+              popover: Popover {
+                child: Box {
+                  orientation: vertical;
+
+                  CheckButton case_sensitive {
+                    label: _("_Match Case");
+                    use-underline: true;
+                  }
+
+                  CheckButton whole_words {
+                    label: _("Match _Whole Words");
+                    use-underline: true;
+                  }
+
+                  CheckButton regex {
+                    label: _("_Regular Expressions");
+                    use-underline: true;
+                  }
+                };
+              };
             }
           }
-        }
+
+          Box replace_row {
+            spacing: 6;
+            visible: bind replace_toggle.active;
+
+            Entry replace_entry {
+              placeholder-text: _("Replace");
+              hexpand: true;
+              width-chars: 8;
+              activate => $replace_one() swapped;
+            }
+
+            Box {
+              spacing: 6;
+              halign: end;
+
+              Button {
+                label: _("_Replace");
+                use-underline: true;
+                clicked => $replace_one() swapped;
+              }
+
+              Button {
+                label: _("Replace _All");
+                use-underline: true;
+                clicked => $replace_all() swapped;
+              }
+            }
+          }
+        };
       };
     }
 
