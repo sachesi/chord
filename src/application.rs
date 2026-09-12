@@ -214,7 +214,7 @@ impl ChordApplication {
         self.add_action(&settings.create_action("wrap-text"));
         self.add_action(&settings.create_action("show-line-numbers"));
 
-        let accels: [(&str, &[&str]); 16] = [
+        let accels: [(&str, &[&str]); 17] = [
             ("app.quit", &["<Control>q"]),
             ("app.new-window", &["<Control><Shift>n"]),
             ("app.preferences", &["<Control>comma"]),
@@ -234,6 +234,7 @@ impl ChordApplication {
             ("win.replace", &["<Control>h"]),
             ("win.find-next", &["<Control>g"]),
             ("win.find-previous", &["<Control><Shift>g"]),
+            ("win.go-to-line", &["<Control>l"]),
         ];
         for (action, keys) in accels {
             self.set_accels_for_action(action, keys);

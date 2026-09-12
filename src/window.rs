@@ -8,12 +8,12 @@ use gettextrs::{gettext, ngettext};
 
 use crate::{
     application::{self, ChordApplication},
-    document::Document,
+    document::{self, Document},
     fill,
 };
 
 /// The actions that act on the document shown, off while there is none.
-const DOCUMENT_ACTIONS: [&str; 7] = [
+const DOCUMENT_ACTIONS: [&str; 8] = [
     "win.save",
     "win.save-as",
     "win.close-document",
@@ -21,6 +21,7 @@ const DOCUMENT_ACTIONS: [&str; 7] = [
     "win.replace",
     "win.find-next",
     "win.find-previous",
+    "win.go-to-line",
 ];
 
 mod imp {
@@ -83,6 +84,7 @@ mod imp {
                     document.find_previous();
                 }
             });
+            klass.install_action("win.go-to-line", None, |window, _, _| window.ask_line());
         }
 
         fn instance_init(obj: &glib::subclass::InitializingObject<Self>) {
@@ -571,6 +573,53 @@ impl ChordWindow {
         let _ = settings.set_int("window-width", width);
         let _ = settings.set_int("window-height", height);
         let _ = settings.set_boolean("window-maximized", self.is_maximized());
+    }
+
+    /// Asks which line to go to in the document shown, starting from the one the cursor
+    /// is on.
+    fn ask_line(&self) {
+        let Some(document) = self.document() else {
+            return;
+        };
+        let entry = gtk::Entry::builder()
+            .text(document.line().to_string())
+            .placeholder_text(gettext("Line or line:column"))
+            .activates_default(true)
+            .build();
+        let dialog = adw::AlertDialog::new(
+            Some(&gettext("Go to Line")),
+            Some(&fill(
+                &gettext("The cursor is on line %s of %s."),
+                &[
+                    &document.line().to_string(),
+                    &document.buffer().line_count().to_string(),
+                ],
+            )),
+        );
+        dialog.add_responses(&[("cancel", &gettext("_Cancel")), ("go", &gettext("_Go"))]);
+        dialog.set_response_appearance("go", adw::ResponseAppearance::Suggested);
+        dialog.set_default_response(Some("go"));
+        dialog.set_close_response("cancel");
+        dialog.set_extra_child(Some(&entry));
+        dialog.set_focus(Some(&entry));
+        entry.connect_changed(glib::clone!(
+            #[weak]
+            dialog,
+            move |entry| {
+                dialog.set_response_enabled("go", document::parse_line(&entry.text()).is_some());
+            }
+        ));
+        glib::spawn_future_local(glib::clone!(
+            #[weak(rename_to = window)]
+            self,
+            async move {
+                if dialog.choose_future(Some(&window)).await == "go"
+                    && let Some((line, column)) = document::parse_line(&entry.text())
+                {
+                    document.go_to(line, column);
+                }
+            }
+        ));
     }
 
     fn toast(&self, message: &str) {

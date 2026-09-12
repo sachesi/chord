@@ -183,7 +183,7 @@ impl Document {
     }
 
     /// The line the cursor is on, counted from 1.
-    fn line(&self) -> u32 {
+    pub fn line(&self) -> u32 {
         let buffer = self.buffer();
         let line = buffer.iter_at_mark(&buffer.get_insert()).line();
         u32::try_from(line).unwrap_or(0) + 1
@@ -382,7 +382,7 @@ impl Document {
             self,
             async move {
                 match loaded.await {
-                    Ok(()) => document.go_to(line),
+                    Ok(()) => document.go_to(line, None),
                     Err(error) => document.show_notice(error.message(), false),
                 }
             }
@@ -457,15 +457,24 @@ impl Document {
         banner.set_revealed(true);
     }
 
-    /// Puts the cursor at the start of `line`, counted from 1 and kept within the text.
-    fn go_to(&self, line: u32) {
+    /// Puts the cursor on `line`, at `column` if given, both counted from 1 and kept
+    /// within the text.
+    pub fn go_to(&self, line: u32, column: Option<u32>) {
         let buffer = self.buffer();
         let line = i32::try_from(line.saturating_sub(1))
             .unwrap_or(i32::MAX)
             .min(buffer.line_count() - 1);
-        let Some(iter) = buffer.iter_at_line(line) else {
+        let Some(mut iter) = buffer.iter_at_line(line) else {
             return;
         };
+        if let Some(column) = column {
+            let mut line_end = iter;
+            if !line_end.ends_line() {
+                line_end.forward_to_line_end();
+            }
+            let column = i32::try_from(column.saturating_sub(1)).unwrap_or(i32::MAX);
+            iter.set_line_offset(column.min(line_end.line_offset()));
+        }
         buffer.place_cursor(&iter);
         let view = &self.imp().view;
         view.scroll_to_mark(&buffer.get_insert(), 0.0, true, 0.0, 0.5);
@@ -718,6 +727,21 @@ fn shorten_home(path: &Path, home: &Path) -> String {
     }
 }
 
+/// What the go-to-line entry takes: a line, or a line and a column after a colon, both
+/// counted from 1.
+pub fn parse_line(text: &str) -> Option<(u32, Option<u32>)> {
+    let (line, column) = match text.trim().split_once(':') {
+        Some((line, column)) => (line, Some(column.trim())),
+        None => (text, None),
+    };
+    let line = line.trim().parse().ok().filter(|&line| line > 0)?;
+    let column = match column {
+        Some("") | None => None,
+        Some(column) => Some(column.parse().ok().filter(|&column| column > 0)?),
+    };
+    Some((line, column))
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -732,5 +756,21 @@ mod tests {
             "/home/meadow"
         );
         assert_eq!(shorten_home(Path::new("/etc"), home), "/etc");
+    }
+
+    #[test]
+    fn a_line_alone_or_with_a_column() {
+        assert_eq!(parse_line("12"), Some((12, None)));
+        assert_eq!(parse_line(" 12:4 "), Some((12, Some(4))));
+        assert_eq!(parse_line("12:"), Some((12, None)));
+    }
+
+    #[test]
+    fn lines_and_columns_start_at_one() {
+        assert_eq!(parse_line("0"), None);
+        assert_eq!(parse_line("3:0"), None);
+        assert_eq!(parse_line(""), None);
+        assert_eq!(parse_line("x"), None);
+        assert_eq!(parse_line("3:x"), None);
     }
 }

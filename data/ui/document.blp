@@ -137,6 +137,7 @@ template $ChordDocument: Adw.Bin {
 
     content: ScrolledWindow {
       child: GtkSource.View view {
+        extra-menu: text_menu;
         monospace: true;
         auto-indent: true;
         smart-backspace: true;
@@ -152,4 +153,13 @@ template $ChordDocument: Adw.Bin {
       };
     };
   };
+}
+
+menu text_menu {
+  section {
+    item {
+      label: _("Go to _Line…");
+      action: "win.go-to-line";
+    }
+  }
 }
