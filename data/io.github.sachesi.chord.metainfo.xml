@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component type="desktop-application">
+  <id>io.github.sachesi.chord</id>
+  <metadata_license>CC0-1.0</metadata_license>
+  <project_license>GPL-3.0-or-later</project_license>
+  <name>Chord</name>
+  <summary>Edit text files</summary>
+  <description>
+    <p>Chord is a text editor built with GTK 4, libadwaita and GtkSourceView. It opens files in tabs, colours the syntax of the languages GtkSourceView knows, and keeps a file’s encoding and line endings as it found them.</p>
+    <p>It finds and replaces as you type, with regular expressions if asked, goes to a line and column, tells you when a file changes on disk under it, and refuses to save over changes another program made unless you say so.</p>
+  </description>
+  <launchable type="desktop-id">io.github.sachesi.chord.desktop</launchable>
+  <url type="homepage">https://github.com/sachesi/chord</url>
+  <url type="bugtracker">https://github.com/sachesi/chord/issues</url>
+  <url type="vcs-browser">https://github.com/sachesi/chord</url>
+  <developer id="io.github.sachesi"><name>sachesi</name></developer>
+  <content_rating type="oars-1.1"/>
+  <requires>
+    <display_length compare="ge">360</display_length>
+  </requires>
+  <supports>
+    <control>keyboard</control>
+    <control>pointing</control>
+  </supports>
+  <provides>
+    <binary>chord</binary>
+  </provides>
+</component>
