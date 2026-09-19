@@ -17,6 +17,7 @@ pub fn dialog(settings: &gio::Settings) -> adw::PreferencesDialog {
         ("show-line-numbers", "show_line_numbers"),
         ("highlight-current-line", "highlight_current_line"),
         ("wrap-text", "wrap_text"),
+        ("shade-alternate-lines", "shade_alternate_lines"),
         ("show-right-margin", "show_right_margin"),
         ("insert-spaces", "insert_spaces"),
         ("auto-indent", "auto_indent"),

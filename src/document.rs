@@ -10,7 +10,7 @@ use adw::subclass::prelude::*;
 use gettextrs::{gettext, ngettext};
 use sourceview5::prelude::*;
 
-use crate::{application, fill};
+use crate::{application, fill, view::ChordView};
 
 /// When a file was last changed, as GIO gives it: seconds, and microseconds within them.
 type Stamp = (u64, u32);
@@ -43,7 +43,7 @@ mod imp {
         #[template_child]
         pub replace_entry: TemplateChild<gtk::Entry>,
         #[template_child]
-        pub view: TemplateChild<sourceview5::View>,
+        pub view: TemplateChild<ChordView>,
         /// The name, marked while there are changes not saved.
         #[property(get)]
         pub title: RefCell<String>,
@@ -71,7 +71,7 @@ mod imp {
         type ParentType = adw::Bin;
 
         fn class_init(klass: &mut Self::Class) {
-            sourceview5::View::ensure_type();
+            ChordView::ensure_type();
             klass.bind_template();
             klass.bind_template_callbacks();
         }
@@ -224,6 +224,7 @@ impl Document {
             "right-margin-position",
             "tab-width",
             "auto-indent",
+            "shade-alternate-lines",
         ] {
             settings.bind(key, view, key).get().build();
         }

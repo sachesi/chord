@@ -3,6 +3,7 @@ mod config;
 mod document;
 mod font;
 mod preferences;
+mod view;
 mod window;
 
 use gio::prelude::*;

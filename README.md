@@ -12,7 +12,8 @@ saving over such a change asks first. A file named on the command line that does
 exist yet opens empty and is made when it is saved. Makefiles are indented with tabs
 whatever the setting for spaces says. The text is in the system's monospace font or one
 chosen in the preferences, follows the system's light or dark style, and zooms with Ctrl++
-and Ctrl+-.
+and Ctrl+-. Every other line is shaded faintly to keep rows apart; the preferences turn
+that off.
 
 Running `chord FILE…` again opens the files in the window used last, or in a new one with
 `--new-window`; a file already open anywhere is brought forward instead of opened twice.

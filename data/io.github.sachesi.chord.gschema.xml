@@ -21,6 +21,10 @@
       <default>true</default>
       <summary>Wrap lines longer than the window</summary>
     </key>
+    <key name="shade-alternate-lines" type="b">
+      <default>true</default>
+      <summary>Shade every other line</summary>
+    </key>
     <key name="show-right-margin" type="b">
       <default>false</default>
       <summary>Show a line at the right margin</summary>
