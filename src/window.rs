@@ -443,10 +443,26 @@ impl ChordWindow {
                     gettext("_Save"),
                 )
             } else {
-                self.toast(&fill(
-                    &gettext("Could not save “%s”: %s"),
-                    &[&name, error.message()],
+                let toast = adw::Toast::builder()
+                    .title(fill(
+                        &gettext("Could not save “%s”: %s"),
+                        &[&name, error.message()],
+                    ))
+                    .use_markup(false)
+                    .button_label(gettext("_Save As…"))
+                    .build();
+                toast.connect_button_clicked(glib::clone!(
+                    #[weak(rename_to = window)]
+                    self,
+                    #[weak]
+                    document,
+                    move |_| {
+                        glib::spawn_future_local(async move {
+                            window.save(&document, true).await;
+                        });
+                    }
                 ));
+                self.imp().toast_overlay.add_toast(toast);
                 return false;
             };
             if flags.contains(flag)
