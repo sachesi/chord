@@ -1,0 +1,570 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the chord package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: chord 0.1.0\n"
+"Report-Msgid-Bugs-To: https://github.com/sachesi/chord/issues\n"
+"POT-Creation-Date: 2026-09-24 20:58+0300\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=INTEGER; plural=EXPRESSION;\n"
+
+#: data/io.github.sachesi.chord.desktop:2
+#: data/io.github.sachesi.chord.metainfo.xml:6 src/window.rs:261
+#: ui/window.ui:36
+#, no-c-format
+msgid "Chord"
+msgstr ""
+
+#: data/io.github.sachesi.chord.desktop:3
+msgid "Text Editor"
+msgstr ""
+
+#: data/io.github.sachesi.chord.desktop:4
+#: data/io.github.sachesi.chord.metainfo.xml:7 src/application.rs:307
+#, no-c-format
+msgid "Edit text files"
+msgstr ""
+
+#: data/io.github.sachesi.chord.desktop:12
+msgid "text;editor;plain;code;config;"
+msgstr ""
+
+#: data/io.github.sachesi.chord.desktop:16 ui/shortcuts_dialog.ui:151
+msgid "New Window"
+msgstr ""
+
+#: data/io.github.sachesi.chord.gschema.xml:6
+msgid "Use the system’s monospace font"
+msgstr ""
+
+#: data/io.github.sachesi.chord.gschema.xml:10
+msgid "Font of the text, when the system’s is not used"
+msgstr ""
+
+#: data/io.github.sachesi.chord.gschema.xml:14
+msgid "Show line numbers"
+msgstr ""
+
+#: data/io.github.sachesi.chord.gschema.xml:18
+msgid "Highlight the line the cursor is on"
+msgstr ""
+
+#: data/io.github.sachesi.chord.gschema.xml:22
+msgid "Wrap lines longer than the window"
+msgstr ""
+
+#: data/io.github.sachesi.chord.gschema.xml:26
+msgid "Shade every other line"
+msgstr ""
+
+#: data/io.github.sachesi.chord.gschema.xml:30
+msgid "Show a line at the right margin"
+msgstr ""
+
+#: data/io.github.sachesi.chord.gschema.xml:35
+msgid "Column of the right margin"
+msgstr ""
+
+#: data/io.github.sachesi.chord.gschema.xml:40
+msgid "Width of a tab, in spaces"
+msgstr ""
+
+#: data/io.github.sachesi.chord.gschema.xml:44
+msgid "Insert spaces instead of tabs"
+msgstr ""
+
+#: data/io.github.sachesi.chord.gschema.xml:45
+msgid "Makefiles get tabs whatever this says, since make needs them."
+msgstr ""
+
+#: data/io.github.sachesi.chord.gschema.xml:49
+msgid "Indent a new line as the one before it"
+msgstr ""
+
+#: data/io.github.sachesi.chord.gschema.xml:53
+msgid "Width of the last window closed"
+msgstr ""
+
+#: data/io.github.sachesi.chord.gschema.xml:57
+msgid "Height of the last window closed"
+msgstr ""
+
+#: data/io.github.sachesi.chord.gschema.xml:61
+msgid "Whether the last window closed was maximized"
+msgstr ""
+
+#: data/io.github.sachesi.chord.metainfo.xml:9
+msgid ""
+"Chord is a text editor built with GTK 4, libadwaita and GtkSourceView. It "
+"opens files in tabs, colours the syntax of the languages GtkSourceView "
+"knows, and keeps a file’s encoding and line endings as it found them."
+msgstr ""
+
+#: data/io.github.sachesi.chord.metainfo.xml:10
+msgid ""
+"It finds and replaces as you type, with regular expressions if asked, goes "
+"to a line and column, tells you when a file changes on disk under it, and "
+"refuses to save over changes another program made unless you say so."
+msgstr ""
+
+#: data/io.github.sachesi.chord.metainfo.xml:16
+msgid "sachesi"
+msgstr ""
+
+#: src/application.rs:121
+#, no-c-format
+msgid "Open the files in a new window"
+msgstr ""
+
+#: src/application.rs:129
+#, no-c-format
+msgid "Print the version and exit"
+msgstr ""
+
+#: src/application.rs:138
+#, no-c-format
+msgid "[FILE…]"
+msgstr ""
+
+#. Translators: put your name here, one per line, optionally with an email address.
+#: src/application.rs:309
+#, no-c-format
+msgid "translator-credits"
+msgstr ""
+
+#: src/document.rs:180
+#, no-c-format
+msgid "Untitled Document"
+msgstr ""
+
+#: src/document.rs:328
+#, no-c-format
+msgid ""
+"Parts of this file are not text and show as codes; saving writes the codes"
+msgstr ""
+
+#: src/document.rs:441
+#, no-c-format
+msgid "The file changed on disk; reloading discards your changes"
+msgstr ""
+
+#: src/document.rs:444
+#, no-c-format
+msgid "The file changed on disk"
+msgstr ""
+
+#: src/document.rs:446
+#, no-c-format
+msgid "The file is no longer on disk; saving writes it again"
+msgstr ""
+
+#: src/document.rs:457
+#, no-c-format
+msgid "_Reload"
+msgstr ""
+
+#: src/document.rs:678
+#, no-c-format
+msgid "No results"
+msgstr ""
+
+#. Translators: the number of the match selected, then of all the matches.
+#: src/document.rs:687
+#, no-c-format
+msgid "%s of %s"
+msgstr ""
+
+#. Translators: how many matches the search found.
+#: src/document.rs:693
+#, no-c-format
+msgid "%s result"
+msgid_plural "%s results"
+msgstr[0] ""
+msgstr[1] ""
+
+#. Translators: the name of the file, then what went wrong.
+#: src/window.rs:329
+#, no-c-format
+msgid "Could not open “%s”: %s"
+msgstr ""
+
+#: src/window.rs:347
+#, no-c-format
+msgid "Text Files"
+msgstr ""
+
+#: src/window.rs:350
+#, no-c-format
+msgid "All Files"
+msgstr ""
+
+#: src/window.rs:356
+#, no-c-format
+msgid "Open Files"
+msgstr ""
+
+#: src/window.rs:403 ui/shortcuts_dialog.ui:33
+#, no-c-format
+msgid "Save As"
+msgstr ""
+
+#: src/window.rs:431
+#, no-c-format
+msgid "Replace the File on Disk?"
+msgstr ""
+
+#: src/window.rs:433
+#, no-c-format
+msgid ""
+"“%s” was changed by another program after it was opened here. Saving "
+"replaces those changes."
+msgstr ""
+
+#: src/window.rs:435 ui/document.ui:139
+#, no-c-format
+msgid "_Replace"
+msgstr ""
+
+#: src/window.rs:440
+#, no-c-format
+msgid "Save the Codes?"
+msgstr ""
+
+#: src/window.rs:442
+#, no-c-format
+msgid ""
+"Parts of “%s” could not be read as text. Saving writes the codes shown in "
+"their place."
+msgstr ""
+
+#: src/window.rs:444 src/window.rs:559
+#, no-c-format
+msgid "_Save"
+msgstr ""
+
+#. Translators: the name of the file, then what went wrong.
+#: src/window.rs:450
+#, no-c-format
+msgid "Could not save “%s”: %s"
+msgstr ""
+
+#: src/window.rs:454 ui/window.ui:121
+#, no-c-format
+msgid "_Save As…"
+msgstr ""
+
+#: src/window.rs:483 src/window.rs:565 src/window.rs:618
+#, no-c-format
+msgid "_Cancel"
+msgstr ""
+
+#: src/window.rs:544
+#, no-c-format
+msgid "“%s” has changes that are not saved. Closing without saving loses them."
+msgstr ""
+
+#: src/window.rs:551
+#, no-c-format
+msgid ""
+"%s document has changes that are not saved. Closing without saving loses "
+"them."
+msgid_plural ""
+"%s documents have changes that are not saved. Closing without saving loses "
+"them."
+msgstr[0] ""
+msgstr[1] ""
+
+#: src/window.rs:559
+#, no-c-format
+msgid "_Discard"
+msgstr ""
+
+#: src/window.rs:561
+#, no-c-format
+msgid "_Discard All"
+msgstr ""
+
+#: src/window.rs:561
+#, no-c-format
+msgid "_Save All"
+msgstr ""
+
+#: src/window.rs:563
+#, no-c-format
+msgid "Save Changes?"
+msgstr ""
+
+#: src/window.rs:604
+#, no-c-format
+msgid "Line or line:column"
+msgstr ""
+
+#: src/window.rs:608 ui/shortcuts_dialog.ui:117
+#, no-c-format
+msgid "Go to Line"
+msgstr ""
+
+#. Translators: the line the cursor is on, then how many lines there are.
+#: src/window.rs:611
+#, no-c-format
+msgid "The cursor is on line %s of %s."
+msgstr ""
+
+#: src/window.rs:618
+#, no-c-format
+msgid "_Go"
+msgstr ""
+
+#: ui/document.ui:41 ui/shortcuts_dialog.ui:93
+msgid "Find"
+msgstr ""
+
+#: ui/document.ui:67 ui/shortcuts_dialog.ui:111
+msgid "Previous Match"
+msgstr ""
+
+#: ui/document.ui:74 ui/shortcuts_dialog.ui:105
+msgid "Next Match"
+msgstr ""
+
+#: ui/document.ui:83 ui/document.ui:127
+msgid "Replace"
+msgstr ""
+
+#: ui/document.ui:89
+msgid "Search Options"
+msgstr ""
+
+#: ui/document.ui:97
+msgid "_Match Case"
+msgstr ""
+
+#: ui/document.ui:103
+msgid "Match _Whole Words"
+msgstr ""
+
+#: ui/document.ui:109
+msgid "_Regular Expressions"
+msgstr ""
+
+#: ui/document.ui:146
+msgid "Replace _All"
+msgstr ""
+
+#: ui/document.ui:187
+msgid "Go to _Line…"
+msgstr ""
+
+#: ui/preferences.ui:14 ui/preferences.ui:22
+msgid "Font"
+msgstr ""
+
+#: ui/preferences.ui:17
+msgid "Use System Font"
+msgstr ""
+
+#: ui/preferences.ui:31
+msgid "Choose a Font"
+msgstr ""
+
+#: ui/preferences.ui:42
+msgid "Display"
+msgstr ""
+
+#: ui/preferences.ui:45
+msgid "Show Line Numbers"
+msgstr ""
+
+#: ui/preferences.ui:50
+msgid "Highlight Current Line"
+msgstr ""
+
+#: ui/preferences.ui:55
+msgid "Wrap Text"
+msgstr ""
+
+#: ui/preferences.ui:60
+msgid "Shade Alternate Lines"
+msgstr ""
+
+#: ui/preferences.ui:65
+msgid "Show Right Margin"
+msgstr ""
+
+#: ui/preferences.ui:70
+msgid "Right Margin Column"
+msgstr ""
+
+#: ui/preferences.ui:85
+msgid "Indentation"
+msgstr ""
+
+#: ui/preferences.ui:88
+msgid "Tab Width"
+msgstr ""
+
+#: ui/preferences.ui:101
+msgid "Insert Spaces Instead of Tabs"
+msgstr ""
+
+#: ui/preferences.ui:106
+msgid "Automatic Indentation"
+msgstr ""
+
+#: ui/preferences.ui:107
+msgid "Start a new line where the one before it started"
+msgstr ""
+
+#: ui/shortcuts_dialog.ui:12
+msgid "Documents"
+msgstr ""
+
+#: ui/shortcuts_dialog.ui:15 ui/window.ui:31
+msgid "New Document"
+msgstr ""
+
+#: ui/shortcuts_dialog.ui:21
+msgid "Open"
+msgstr ""
+
+#: ui/shortcuts_dialog.ui:27
+msgid "Save"
+msgstr ""
+
+#: ui/shortcuts_dialog.ui:39
+msgid "Close Document"
+msgstr ""
+
+#: ui/shortcuts_dialog.ui:45
+msgid "Next Document"
+msgstr ""
+
+#: ui/shortcuts_dialog.ui:51
+msgid "Previous Document"
+msgstr ""
+
+#: ui/shortcuts_dialog.ui:57
+msgid "Switch to a Document"
+msgstr ""
+
+#: ui/shortcuts_dialog.ui:58
+msgid "Alt and the number of the tab"
+msgstr ""
+
+#: ui/shortcuts_dialog.ui:66
+msgid "Editing"
+msgstr ""
+
+#: ui/shortcuts_dialog.ui:69
+msgid "Undo"
+msgstr ""
+
+#: ui/shortcuts_dialog.ui:75
+msgid "Redo"
+msgstr ""
+
+#: ui/shortcuts_dialog.ui:81
+msgid "Move Lines Up"
+msgstr ""
+
+#: ui/shortcuts_dialog.ui:87
+msgid "Move Lines Down"
+msgstr ""
+
+#: ui/shortcuts_dialog.ui:99
+msgid "Find and Replace"
+msgstr ""
+
+#: ui/shortcuts_dialog.ui:125
+msgid "View"
+msgstr ""
+
+#: ui/shortcuts_dialog.ui:128
+msgid "Zoom In"
+msgstr ""
+
+#: ui/shortcuts_dialog.ui:134
+msgid "Zoom Out"
+msgstr ""
+
+#: ui/shortcuts_dialog.ui:140
+msgid "Normal Size"
+msgstr ""
+
+#: ui/shortcuts_dialog.ui:148
+msgid "General"
+msgstr ""
+
+#: ui/shortcuts_dialog.ui:157
+msgid "Close Window"
+msgstr ""
+
+#: ui/shortcuts_dialog.ui:163
+msgid "Preferences"
+msgstr ""
+
+#: ui/shortcuts_dialog.ui:169
+msgid "Keyboard Shortcuts"
+msgstr ""
+
+#: ui/shortcuts_dialog.ui:175
+msgid "Quit"
+msgstr ""
+
+#: ui/window.ui:21 ui/window.ui:83
+msgid "_Open…"
+msgstr ""
+
+#: ui/window.ui:24
+msgid "Open a File"
+msgstr ""
+
+#: ui/window.ui:44
+msgid "Main Menu"
+msgstr ""
+
+#: ui/window.ui:64
+msgid "Start or Open a Document"
+msgstr ""
+
+#: ui/window.ui:72
+msgid "_New Document"
+msgstr ""
+
+#: ui/window.ui:115
+msgid "New _Window"
+msgstr ""
+
+#: ui/window.ui:125
+msgid "_Find and Replace"
+msgstr ""
+
+#: ui/window.ui:131
+msgid "_Wrap Text"
+msgstr ""
+
+#: ui/window.ui:135
+msgid "Show Line _Numbers"
+msgstr ""
+
+#: ui/window.ui:141
+msgid "_Preferences"
+msgstr ""
+
+#: ui/window.ui:145
+msgid "_Keyboard Shortcuts"
+msgstr ""
+
+#: ui/window.ui:149
+msgid "_About Chord"
+msgstr ""

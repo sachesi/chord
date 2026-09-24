@@ -325,6 +325,7 @@ impl ChordWindow {
                     return;
                 };
                 window.toast(&fill(
+                    // Translators: the name of the file, then what went wrong.
                     &gettext("Could not open “%s”: %s"),
                     &[&document.name(), error.message()],
                 ));
@@ -445,6 +446,7 @@ impl ChordWindow {
             } else {
                 let toast = adw::Toast::builder()
                     .title(fill(
+                        // Translators: the name of the file, then what went wrong.
                         &gettext("Could not save “%s”: %s"),
                         &[&name, error.message()],
                     ))
@@ -605,6 +607,7 @@ impl ChordWindow {
         let dialog = adw::AlertDialog::new(
             Some(&gettext("Go to Line")),
             Some(&fill(
+                // Translators: the line the cursor is on, then how many lines there are.
                 &gettext("The cursor is on line %s of %s."),
                 &[
                     &document.line().to_string(),

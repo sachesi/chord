@@ -683,11 +683,13 @@ impl Document {
                 .map_or(0, |(start, end)| search.occurrence_position(&start, &end));
             if position > 0 {
                 fill(
+                    // Translators: the number of the match selected, then of all the matches.
                     &gettext("%s of %s"),
                     &[&position.to_string(), &count.to_string()],
                 )
             } else {
                 fill(
+                    // Translators: how many matches the search found.
                     &ngettext("%s result", "%s results", count.unsigned_abs()),
                     &[&count.to_string()],
                 )

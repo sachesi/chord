@@ -31,4 +31,7 @@ libadwaita and GtkSourceView 5.
     just check               # fmt, clippy -D warnings, blueprint, schema, validators
     just test                # the unit tests
 
+User-visible strings go through `gettext`; `just pot` regenerates `po/chord.pot`, and a
+language is a line in `po/LINGUAS` plus its `.po` file.
+
 GPL-3.0-or-later.

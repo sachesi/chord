@@ -17,7 +17,9 @@ bindir := destdir + prefix + "/bin"
 datadir := destdir + prefix + "/share"
 release := "target/release"
 schema_dir := "target/schemas"
+pot_dir := "target/pot"
 check_dir := "target/check"
+version := `sed -n 's/^version = "\(.*\)"/\1/p' Cargo.toml`
 
 default:
     @just --list
@@ -50,6 +52,28 @@ check:
     desktop-file-validate data/{{app_id}}.desktop
     appstreamcli validate --no-net data/{{app_id}}.metainfo.xml
     for lang in $(cat po/LINGUAS); do msgfmt -c -o /dev/null po/$lang.po; done
+
+# Regenerate po/chord.pot from the Rust sources, the Blueprint files, the desktop entry,
+# the metainfo and the schema.
+pot:
+    mkdir -p {{pot_dir}}/ui
+    blueprint-compiler batch-compile {{pot_dir}}/ui data/ui data/ui/*.blp >/dev/null
+    # xgettext has no Rust mode; the C lexer copes once lifetimes ('a, 'static) are stripped.
+    rm -rf {{pot_dir}}/src && cp -r src {{pot_dir}}/src
+    find {{pot_dir}}/src -name '*.rs' -exec sed -i -E "s/'([A-Za-z_][A-Za-z0-9_]*)([^'A-Za-z0-9_]|$)/\1\2/g" {} +
+    xgettext --from-code=UTF-8 --package-name=chord --package-version={{version}} \
+        --msgid-bugs-address=https://github.com/sachesi/chord/issues \
+        --language=C --keyword= --keyword=gettext --keyword=ngettext:1,2 \
+        --flag=gettext:1:no-c-format --flag=ngettext:1:no-c-format --flag=ngettext:2:no-c-format \
+        --add-comments=Translators --sort-by-file --directory={{pot_dir}} -o po/chord.pot $(cd {{pot_dir}} && find src -name '*.rs' | sort)
+    xgettext -j --from-code=UTF-8 --package-name=chord --package-version={{version}} --msgid-bugs-address=https://github.com/sachesi/chord/issues --add-comments=Translators --sort-by-file --directory={{pot_dir}} -o po/chord.pot $(cd {{pot_dir}} && ls ui/*.ui)
+    xgettext -j --from-code=UTF-8 --package-name=chord --package-version={{version}} --msgid-bugs-address=https://github.com/sachesi/chord/issues --language=Desktop --sort-by-file -o po/chord.pot data/{{app_id}}.desktop
+    xgettext -j --from-code=UTF-8 --package-name=chord --package-version={{version}} --msgid-bugs-address=https://github.com/sachesi/chord/issues --sort-by-file -o po/chord.pot data/{{app_id}}.metainfo.xml data/{{app_id}}.gschema.xml
+
+# Merge the current template into every po/<lang>.po.
+po: pot
+    for lang in $(cat po/LINGUAS); do msgmerge --update --backup=none --quiet po/$lang.po po/chord.pot; done
+    for lang in $(cat po/LINGUAS); do msgfmt --statistics -o /dev/null po/$lang.po; done
 
 # Unit tests.
 test:

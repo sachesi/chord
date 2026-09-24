@@ -1,0 +1,589 @@
+# Ukrainian translation for Chord.
+# This file is distributed under the same license as the chord package.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: chord\n"
+"Report-Msgid-Bugs-To: https://github.com/sachesi/chord/issues\n"
+"POT-Creation-Date: 2026-09-24 20:58+0300\n"
+"PO-Revision-Date: 2026-09-24 21:24+0300\n"
+"Last-Translator: sachesi\n"
+"Language-Team: Ukrainian\n"
+"Language: uk\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && "
+"n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
+
+#: data/io.github.sachesi.chord.desktop:2
+#: data/io.github.sachesi.chord.metainfo.xml:6 src/window.rs:261
+#: ui/window.ui:36
+#, no-c-format
+msgid "Chord"
+msgstr "Chord"
+
+#: data/io.github.sachesi.chord.desktop:3
+msgid "Text Editor"
+msgstr "Текстовий редактор"
+
+#: data/io.github.sachesi.chord.desktop:4
+#: data/io.github.sachesi.chord.metainfo.xml:7 src/application.rs:307
+#, no-c-format
+msgid "Edit text files"
+msgstr "Редагування текстових файлів"
+
+#: data/io.github.sachesi.chord.desktop:12
+msgid "text;editor;plain;code;config;"
+msgstr "text;editor;plain;code;config;текст;редактор;код;конфігурація;"
+
+#: data/io.github.sachesi.chord.desktop:16 ui/shortcuts_dialog.ui:151
+msgid "New Window"
+msgstr "Нове вікно"
+
+#: data/io.github.sachesi.chord.gschema.xml:6
+msgid "Use the system’s monospace font"
+msgstr "Використовувати системний моноширинний шрифт"
+
+#: data/io.github.sachesi.chord.gschema.xml:10
+msgid "Font of the text, when the system’s is not used"
+msgstr "Шрифт тексту, коли системний не використовується"
+
+#: data/io.github.sachesi.chord.gschema.xml:14
+msgid "Show line numbers"
+msgstr "Показувати номери рядків"
+
+#: data/io.github.sachesi.chord.gschema.xml:18
+msgid "Highlight the line the cursor is on"
+msgstr "Підсвічувати рядок, на якому стоїть курсор"
+
+#: data/io.github.sachesi.chord.gschema.xml:22
+msgid "Wrap lines longer than the window"
+msgstr "Переносити рядки, довші за вікно"
+
+#: data/io.github.sachesi.chord.gschema.xml:26
+msgid "Shade every other line"
+msgstr "Затінювати кожен другий рядок"
+
+#: data/io.github.sachesi.chord.gschema.xml:30
+msgid "Show a line at the right margin"
+msgstr "Показувати лінію правого поля"
+
+#: data/io.github.sachesi.chord.gschema.xml:35
+msgid "Column of the right margin"
+msgstr "Стовпчик правого поля"
+
+#: data/io.github.sachesi.chord.gschema.xml:40
+msgid "Width of a tab, in spaces"
+msgstr "Ширина табуляції, у пробілах"
+
+#: data/io.github.sachesi.chord.gschema.xml:44
+msgid "Insert spaces instead of tabs"
+msgstr "Вставляти пробіли замість табуляції"
+
+#: data/io.github.sachesi.chord.gschema.xml:45
+msgid "Makefiles get tabs whatever this says, since make needs them."
+msgstr "У Makefile завжди вставляється табуляція, бо її потребує make."
+
+#: data/io.github.sachesi.chord.gschema.xml:49
+msgid "Indent a new line as the one before it"
+msgstr "Робити відступ нового рядка як у попереднього"
+
+#: data/io.github.sachesi.chord.gschema.xml:53
+msgid "Width of the last window closed"
+msgstr "Ширина останнього закритого вікна"
+
+#: data/io.github.sachesi.chord.gschema.xml:57
+msgid "Height of the last window closed"
+msgstr "Висота останнього закритого вікна"
+
+#: data/io.github.sachesi.chord.gschema.xml:61
+msgid "Whether the last window closed was maximized"
+msgstr "Чи було останнє закрите вікно розгорнуте"
+
+#: data/io.github.sachesi.chord.metainfo.xml:9
+msgid ""
+"Chord is a text editor built with GTK 4, libadwaita and GtkSourceView. It "
+"opens files in tabs, colours the syntax of the languages GtkSourceView "
+"knows, and keeps a file’s encoding and line endings as it found them."
+msgstr ""
+"Текстовий редактор Chord побудований на GTK 4, libadwaita і GtkSourceView. "
+"Він відкриває файли у вкладках, підсвічує синтаксис мов, відомих "
+"GtkSourceView, і зберігає кодування та закінчення рядків файлу такими, якими "
+"їх знайшов."
+
+#: data/io.github.sachesi.chord.metainfo.xml:10
+msgid ""
+"It finds and replaces as you type, with regular expressions if asked, goes "
+"to a line and column, tells you when a file changes on disk under it, and "
+"refuses to save over changes another program made unless you say so."
+msgstr ""
+"Він шукає й замінює під час введення, за потреби з регулярними виразами, "
+"переходить до рядка й стовпчика, повідомляє, коли файл змінюється на диску, "
+"і не зберігає поверх змін іншої програми без вашої згоди."
+
+#: data/io.github.sachesi.chord.metainfo.xml:16
+msgid "sachesi"
+msgstr "sachesi"
+
+#: src/application.rs:121
+#, no-c-format
+msgid "Open the files in a new window"
+msgstr "Відкрити файли в новому вікні"
+
+#: src/application.rs:129
+#, no-c-format
+msgid "Print the version and exit"
+msgstr "Показати версію та вийти"
+
+#: src/application.rs:138
+#, no-c-format
+msgid "[FILE…]"
+msgstr "[ФАЙЛ…]"
+
+#. Translators: put your name here, one per line, optionally with an email address.
+#: src/application.rs:309
+#, no-c-format
+msgid "translator-credits"
+msgstr "sachesi"
+
+#: src/document.rs:180
+#, no-c-format
+msgid "Untitled Document"
+msgstr "Документ без назви"
+
+#: src/document.rs:328
+#, no-c-format
+msgid ""
+"Parts of this file are not text and show as codes; saving writes the codes"
+msgstr ""
+"Частина цього файлу не є текстом і показана кодами; збереження запише ці коди"
+
+#: src/document.rs:441
+#, no-c-format
+msgid "The file changed on disk; reloading discards your changes"
+msgstr "Файл змінився на диску; перезавантаження скасує ваші зміни"
+
+#: src/document.rs:444
+#, no-c-format
+msgid "The file changed on disk"
+msgstr "Файл змінився на диску"
+
+#: src/document.rs:446
+#, no-c-format
+msgid "The file is no longer on disk; saving writes it again"
+msgstr "Файлу більше немає на диску; збереження запише його знову"
+
+#: src/document.rs:457
+#, no-c-format
+msgid "_Reload"
+msgstr "_Перезавантажити"
+
+#: src/document.rs:678
+#, no-c-format
+msgid "No results"
+msgstr "Нічого не знайдено"
+
+#. Translators: the number of the match selected, then of all the matches.
+#: src/document.rs:687
+#, no-c-format
+msgid "%s of %s"
+msgstr "%s з %s"
+
+#. Translators: how many matches the search found.
+#: src/document.rs:693
+#, no-c-format
+msgid "%s result"
+msgid_plural "%s results"
+msgstr[0] "%s результат"
+msgstr[1] "%s результати"
+msgstr[2] "%s результатів"
+
+#. Translators: the name of the file, then what went wrong.
+#: src/window.rs:329
+#, no-c-format
+msgid "Could not open “%s”: %s"
+msgstr "Не вдалося відкрити «%s»: %s"
+
+#: src/window.rs:347
+#, no-c-format
+msgid "Text Files"
+msgstr "Текстові файли"
+
+#: src/window.rs:350
+#, no-c-format
+msgid "All Files"
+msgstr "Усі файли"
+
+#: src/window.rs:356
+#, no-c-format
+msgid "Open Files"
+msgstr "Відкрити файли"
+
+#: src/window.rs:403 ui/shortcuts_dialog.ui:33
+#, no-c-format
+msgid "Save As"
+msgstr "Зберегти як"
+
+#: src/window.rs:431
+#, no-c-format
+msgid "Replace the File on Disk?"
+msgstr "Замінити файл на диску?"
+
+#: src/window.rs:433
+#, no-c-format
+msgid ""
+"“%s” was changed by another program after it was opened here. Saving "
+"replaces those changes."
+msgstr ""
+"Файл «%s» змінила інша програма після того, як його відкрили тут. Збереження "
+"замінить ці зміни."
+
+#: src/window.rs:435 ui/document.ui:139
+#, no-c-format
+msgid "_Replace"
+msgstr "_Замінити"
+
+#: src/window.rs:440
+#, no-c-format
+msgid "Save the Codes?"
+msgstr "Зберегти коди?"
+
+#: src/window.rs:442
+#, no-c-format
+msgid ""
+"Parts of “%s” could not be read as text. Saving writes the codes shown in "
+"their place."
+msgstr ""
+"Частину «%s» не вдалося прочитати як текст. Збереження запише коди, показані "
+"на її місці."
+
+#: src/window.rs:444 src/window.rs:559
+#, no-c-format
+msgid "_Save"
+msgstr "З_берегти"
+
+#. Translators: the name of the file, then what went wrong.
+#: src/window.rs:450
+#, no-c-format
+msgid "Could not save “%s”: %s"
+msgstr "Не вдалося зберегти «%s»: %s"
+
+#: src/window.rs:454 ui/window.ui:121
+#, no-c-format
+msgid "_Save As…"
+msgstr "Зберегти _як…"
+
+#: src/window.rs:483 src/window.rs:565 src/window.rs:618
+#, no-c-format
+msgid "_Cancel"
+msgstr "_Скасувати"
+
+#: src/window.rs:544
+#, no-c-format
+msgid "“%s” has changes that are not saved. Closing without saving loses them."
+msgstr ""
+"У «%s» є незбережені зміни. Якщо закрити без збереження, їх буде втрачено."
+
+#: src/window.rs:551
+#, no-c-format
+msgid ""
+"%s document has changes that are not saved. Closing without saving loses "
+"them."
+msgid_plural ""
+"%s documents have changes that are not saved. Closing without saving loses "
+"them."
+msgstr[0] ""
+"%s документ має незбережені зміни. Якщо закрити без збереження, їх буде "
+"втрачено."
+msgstr[1] ""
+"%s документи мають незбережені зміни. Якщо закрити без збереження, їх буде "
+"втрачено."
+msgstr[2] ""
+"%s документів мають незбережені зміни. Якщо закрити без збереження, їх буде "
+"втрачено."
+
+#: src/window.rs:559
+#, no-c-format
+msgid "_Discard"
+msgstr "_Відкинути"
+
+#: src/window.rs:561
+#, no-c-format
+msgid "_Discard All"
+msgstr "Відкинути _все"
+
+#: src/window.rs:561
+#, no-c-format
+msgid "_Save All"
+msgstr "З_берегти все"
+
+#: src/window.rs:563
+#, no-c-format
+msgid "Save Changes?"
+msgstr "Зберегти зміни?"
+
+#: src/window.rs:604
+#, no-c-format
+msgid "Line or line:column"
+msgstr "Рядок або рядок:стовпчик"
+
+#: src/window.rs:608 ui/shortcuts_dialog.ui:117
+#, no-c-format
+msgid "Go to Line"
+msgstr "Перейти до рядка"
+
+#. Translators: the line the cursor is on, then how many lines there are.
+#: src/window.rs:611
+#, no-c-format
+msgid "The cursor is on line %s of %s."
+msgstr "Курсор у рядку %s з %s."
+
+#: src/window.rs:618
+#, no-c-format
+msgid "_Go"
+msgstr "_Перейти"
+
+#: ui/document.ui:41 ui/shortcuts_dialog.ui:93
+msgid "Find"
+msgstr "Знайти"
+
+#: ui/document.ui:67 ui/shortcuts_dialog.ui:111
+msgid "Previous Match"
+msgstr "Попередній збіг"
+
+#: ui/document.ui:74 ui/shortcuts_dialog.ui:105
+msgid "Next Match"
+msgstr "Наступний збіг"
+
+#: ui/document.ui:83 ui/document.ui:127
+msgid "Replace"
+msgstr "Замінити"
+
+#: ui/document.ui:89
+msgid "Search Options"
+msgstr "Параметри пошуку"
+
+#: ui/document.ui:97
+msgid "_Match Case"
+msgstr "_Враховувати регістр"
+
+#: ui/document.ui:103
+msgid "Match _Whole Words"
+msgstr "Лише _цілі слова"
+
+#: ui/document.ui:109
+msgid "_Regular Expressions"
+msgstr "_Регулярні вирази"
+
+#: ui/document.ui:146
+msgid "Replace _All"
+msgstr "Замінити _все"
+
+#: ui/document.ui:187
+msgid "Go to _Line…"
+msgstr "Перейти до _рядка…"
+
+#: ui/preferences.ui:14 ui/preferences.ui:22
+msgid "Font"
+msgstr "Шрифт"
+
+#: ui/preferences.ui:17
+msgid "Use System Font"
+msgstr "Використовувати системний шрифт"
+
+#: ui/preferences.ui:31
+msgid "Choose a Font"
+msgstr "Виберіть шрифт"
+
+#: ui/preferences.ui:42
+msgid "Display"
+msgstr "Відображення"
+
+#: ui/preferences.ui:45
+msgid "Show Line Numbers"
+msgstr "Показувати номери рядків"
+
+#: ui/preferences.ui:50
+msgid "Highlight Current Line"
+msgstr "Підсвічувати поточний рядок"
+
+#: ui/preferences.ui:55
+msgid "Wrap Text"
+msgstr "Переносити текст"
+
+#: ui/preferences.ui:60
+msgid "Shade Alternate Lines"
+msgstr "Затінювати рядки через один"
+
+#: ui/preferences.ui:65
+msgid "Show Right Margin"
+msgstr "Показувати праве поле"
+
+#: ui/preferences.ui:70
+msgid "Right Margin Column"
+msgstr "Стовпчик правого поля"
+
+#: ui/preferences.ui:85
+msgid "Indentation"
+msgstr "Відступи"
+
+#: ui/preferences.ui:88
+msgid "Tab Width"
+msgstr "Ширина табуляції"
+
+#: ui/preferences.ui:101
+msgid "Insert Spaces Instead of Tabs"
+msgstr "Пробіли замість табуляції"
+
+#: ui/preferences.ui:106
+msgid "Automatic Indentation"
+msgstr "Автоматичний відступ"
+
+#: ui/preferences.ui:107
+msgid "Start a new line where the one before it started"
+msgstr "Починати новий рядок там, де почався попередній"
+
+#: ui/shortcuts_dialog.ui:12
+msgid "Documents"
+msgstr "Документи"
+
+#: ui/shortcuts_dialog.ui:15 ui/window.ui:31
+msgid "New Document"
+msgstr "Новий документ"
+
+#: ui/shortcuts_dialog.ui:21
+msgid "Open"
+msgstr "Відкрити"
+
+#: ui/shortcuts_dialog.ui:27
+msgid "Save"
+msgstr "Зберегти"
+
+#: ui/shortcuts_dialog.ui:39
+msgid "Close Document"
+msgstr "Закрити документ"
+
+#: ui/shortcuts_dialog.ui:45
+msgid "Next Document"
+msgstr "Наступний документ"
+
+#: ui/shortcuts_dialog.ui:51
+msgid "Previous Document"
+msgstr "Попередній документ"
+
+#: ui/shortcuts_dialog.ui:57
+msgid "Switch to a Document"
+msgstr "Перейти до документа"
+
+#: ui/shortcuts_dialog.ui:58
+msgid "Alt and the number of the tab"
+msgstr "Alt і номер вкладки"
+
+#: ui/shortcuts_dialog.ui:66
+msgid "Editing"
+msgstr "Редагування"
+
+#: ui/shortcuts_dialog.ui:69
+msgid "Undo"
+msgstr "Повернути"
+
+#: ui/shortcuts_dialog.ui:75
+msgid "Redo"
+msgstr "Повторити"
+
+#: ui/shortcuts_dialog.ui:81
+msgid "Move Lines Up"
+msgstr "Перемістити рядки вгору"
+
+#: ui/shortcuts_dialog.ui:87
+msgid "Move Lines Down"
+msgstr "Перемістити рядки вниз"
+
+#: ui/shortcuts_dialog.ui:99
+msgid "Find and Replace"
+msgstr "Знайти й замінити"
+
+#: ui/shortcuts_dialog.ui:125
+msgid "View"
+msgstr "Перегляд"
+
+#: ui/shortcuts_dialog.ui:128
+msgid "Zoom In"
+msgstr "Збільшити"
+
+#: ui/shortcuts_dialog.ui:134
+msgid "Zoom Out"
+msgstr "Зменшити"
+
+#: ui/shortcuts_dialog.ui:140
+msgid "Normal Size"
+msgstr "Звичайний розмір"
+
+#: ui/shortcuts_dialog.ui:148
+msgid "General"
+msgstr "Загальне"
+
+#: ui/shortcuts_dialog.ui:157
+msgid "Close Window"
+msgstr "Закрити вікно"
+
+#: ui/shortcuts_dialog.ui:163
+msgid "Preferences"
+msgstr "Параметри"
+
+#: ui/shortcuts_dialog.ui:169
+msgid "Keyboard Shortcuts"
+msgstr "Клавіатурні скорочення"
+
+#: ui/shortcuts_dialog.ui:175
+msgid "Quit"
+msgstr "Вийти"
+
+#: ui/window.ui:21 ui/window.ui:83
+msgid "_Open…"
+msgstr "_Відкрити…"
+
+#: ui/window.ui:24
+msgid "Open a File"
+msgstr "Відкрити файл"
+
+#: ui/window.ui:44
+msgid "Main Menu"
+msgstr "Головне меню"
+
+#: ui/window.ui:64
+msgid "Start or Open a Document"
+msgstr "Створіть або відкрийте документ"
+
+#: ui/window.ui:72
+msgid "_New Document"
+msgstr "_Новий документ"
+
+#: ui/window.ui:115
+msgid "New _Window"
+msgstr "Нове _вікно"
+
+#: ui/window.ui:125
+msgid "_Find and Replace"
+msgstr "_Знайти й замінити"
+
+#: ui/window.ui:131
+msgid "_Wrap Text"
+msgstr "Пере_носити текст"
+
+#: ui/window.ui:135
+msgid "Show Line _Numbers"
+msgstr "Номери _рядків"
+
+#: ui/window.ui:141
+msgid "_Preferences"
+msgstr "_Параметри"
+
+#: ui/window.ui:145
+msgid "_Keyboard Shortcuts"
+msgstr "_Клавіатурні скорочення"
+
+#: ui/window.ui:149
+msgid "_About Chord"
+msgstr "Про _Chord"
