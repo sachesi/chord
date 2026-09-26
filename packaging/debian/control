@@ -1,0 +1,30 @@
+Source: chord
+Section: editors
+Priority: optional
+Maintainer: sachesi <xsachesi@pm.me>
+Build-Depends: debhelper-compat (= 13),
+               cargo,
+               rustc (>= 1.92),
+               pkg-config,
+               just,
+               blueprint-compiler,
+               gettext,
+               libgtk-4-dev (>= 4.22),
+               libadwaita-1-dev (>= 1.9),
+               libgtksourceview-5-dev,
+               libglib2.0-dev (>= 2.80)
+Standards-Version: 4.7.2
+Homepage: https://github.com/sachesi/chord
+Rules-Requires-Root: no
+
+Package: chord
+Architecture: any
+Depends: ${shlibs:Depends},
+         ${misc:Depends},
+         libgtk-4-1 (>= 4.22),
+         libadwaita-1-0 (>= 1.9),
+         hicolor-icon-theme
+Description: Text editor built with GTK 4, libadwaita and GtkSourceView
+ Chord is a text editor built with GTK 4, libadwaita and
+ GtkSourceView: tabs, syntax colouring, find and replace as you type, going to a
+ line and column, and a warning when a file changes on disk while it is open.
