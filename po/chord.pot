@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: chord 0.1.0\n"
 "Report-Msgid-Bugs-To: https://github.com/sachesi/chord/issues\n"
-"POT-Creation-Date: 2026-09-24 20:58+0300\n"
+"POT-Creation-Date: 2026-09-27 13:02+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -119,6 +119,14 @@ msgstr ""
 
 #: data/io.github.sachesi.chord.metainfo.xml:16
 msgid "sachesi"
+msgstr ""
+
+#: data/io.github.sachesi.chord.metainfo.xml:31
+msgid ""
+"The first release: tabs, syntax colouring, find and replace, going to a "
+"line, a warning when a file changes on disk, and the preferences for the "
+"font, the display and indentation. The interface is in English, Russian and "
+"Ukrainian."
 msgstr ""
 
 #: src/application.rs:121

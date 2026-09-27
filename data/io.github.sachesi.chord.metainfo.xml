@@ -25,4 +25,11 @@
   <provides>
     <binary>chord</binary>
   </provides>
+  <releases>
+    <release version="0.1.0" date="2026-09-27">
+      <description>
+        <p>The first release: tabs, syntax colouring, find and replace, going to a line, a warning when a file changes on disk, and the preferences for the font, the display and indentation. The interface is in English, Russian and Ukrainian.</p>
+      </description>
+    </release>
+  </releases>
 </component>
